@@ -1,9 +1,12 @@
 import os
+import time
+
 from dotenv import load_dotenv
 from google import genai
-from google.genai import types
+from google.genai import errors, types
 
 from app.config import MODEL_NAME
+from app.schemas import Invoice
 
 load_dotenv()
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
@@ -15,17 +18,53 @@ MIME_TYPES = {
     ".jpeg": "image/jpeg",
 }
 
+EXTRACTION_PROMPT = """You are reading an invoice. Extract the fields into the requested JSON format.
+Rules:
+- Only return a value if you can clearly SEE all of it printed in the image or document.
+- If a value is cut off, partly hidden, blurry, or touching the edge of the image, return null for it.
+- Never calculate or infer a value. Do not work out amounts from quantity x rate, from percentages, or from other totals.
+- Amounts must be plain numbers with no currency symbols or commas.
+- invoice_date: copy it exactly as written on the invoice.
+- gstin: copy it exactly as written.
+- tax_amount: the total of all tax lines you can see (for example CGST + SGST, or IGST, or GST). If no tax amount is visible, use null.
+- Include every line item row you can see, using null for any cell that is cut off."""
 
-def read_invoice(path: str) -> str:
+
+def _load_part(path: str) -> types.Part:
     extension = os.path.splitext(path)[1].lower()
     mime_type = MIME_TYPES[extension]
-
     with open(path, "rb") as f:
         data = f.read()
+    return types.Part.from_bytes(data=data, mime_type=mime_type)
 
-    part = types.Part.from_bytes(data=data, mime_type=mime_type)
-    response = client.models.generate_content(
-        model=MODEL_NAME,
-        contents=[part, "Read this invoice and write out all the text and numbers you can see."],
-    )
+
+def _call_model(contents, config=None, tries: int = 3):
+    # If Google says "busy" (a server error), wait a few seconds and try again.
+    for attempt in range(tries):
+        try:
+            return client.models.generate_content(
+                model=MODEL_NAME, contents=contents, config=config
+            )
+        except errors.ServerError:
+            if attempt == tries - 1:
+                raise
+            time.sleep(5 * (attempt + 1))
+
+
+def read_invoice(path: str) -> str:
+    part = _load_part(path)
+    response = _call_model([part, "Read this invoice and write out all the text and numbers you can see."])
     return response.text
+
+
+def extract_invoice(path: str) -> Invoice:
+    part = _load_part(path)
+    response = _call_model(
+        [part, EXTRACTION_PROMPT],
+        config=types.GenerateContentConfig(
+            response_mime_type="application/json",
+            response_schema=Invoice,
+            temperature=0,
+        ),
+    )
+    return Invoice.model_validate_json(response.text)

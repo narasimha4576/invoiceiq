@@ -2,18 +2,18 @@ from pydantic import BaseModel
 
 
 class LineItem(BaseModel):
-    description: str
-    quantity: float
-    unit_price: float
-    amount: float
+    description: str | None
+    quantity: float | None
+    unit_price: float | None
+    amount: float | None
 
 
 class Invoice(BaseModel):
-    vendor_name: str
-    gstin: str | None = None
-    invoice_number: str
-    invoice_date: str
+    vendor_name: str | None
+    gstin: str | None
+    invoice_number: str | None
+    invoice_date: str | None
     line_items: list[LineItem]
-    subtotal: float
-    tax_amount: float
-    total: float
+    subtotal: float | None
+    tax_amount: float | None
+    total: float | None
