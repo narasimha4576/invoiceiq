@@ -6,7 +6,7 @@ from google import genai
 from google.genai import errors, types
 
 from app.config import MODEL_NAME
-from app.schemas import Invoice
+from app.schemas import AIExtraction, Invoice
 
 load_dotenv()
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
@@ -68,3 +68,24 @@ def extract_invoice(path: str) -> Invoice:
         ),
     )
     return Invoice.model_validate_json(response.text)
+
+CONFIDENCE_PROMPT = EXTRACTION_PROMPT + """
+
+Also fill in "confidence": a number from 0 to 1 for each field, saying how sure you are that the value you returned is exactly right and complete.
+- 1.0 only if the whole value is fully visible and clear.
+- 0.5 or lower if any part is cut off, blurry, hard to read, or you are unsure.
+- 0.0 if the value is null.
+For line_items, give one overall confidence for the whole table."""
+
+
+def extract_with_confidence(path: str) -> AIExtraction:
+    part = _load_part(path)
+    response = _call_model(
+        [part, CONFIDENCE_PROMPT],
+        config=types.GenerateContentConfig(
+            response_mime_type="application/json",
+            response_schema=AIExtraction,
+            temperature=0,
+        ),
+    )
+    return AIExtraction.model_validate_json(response.text)

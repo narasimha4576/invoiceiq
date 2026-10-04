@@ -4,8 +4,9 @@ import tempfile
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from google.genai import errors
 
-from app.extractor import MIME_TYPES, extract_invoice
-from app.schemas import Invoice
+from app.extractor import MIME_TYPES, extract_with_confidence
+from app.review import review_invoice
+from app.schemas import ReviewedInvoice
 
 app = FastAPI(title="InvoiceIQ API")
 
@@ -15,7 +16,7 @@ def health():
     return {"status": "ok"}
 
 
-@app.post("/extract", response_model=Invoice)
+@app.post("/extract", response_model=ReviewedInvoice)
 def extract(file: UploadFile = File(...)):
     extension = os.path.splitext(file.filename or "")[1].lower()
     if extension not in MIME_TYPES:
@@ -31,7 +32,8 @@ def extract(file: UploadFile = File(...)):
         temp_path = tmp.name
 
     try:
-        return extract_invoice(temp_path)
+        extraction = extract_with_confidence(temp_path)
+        return review_invoice(extraction)
     except errors.APIError:
         raise HTTPException(
             status_code=503,
