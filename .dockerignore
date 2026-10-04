@@ -1,0 +1,9 @@
+.venv
+.env
+.git
+samples
+__pycache__
+tests
+ui
+notes.md
+try_extract.py
