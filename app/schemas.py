@@ -17,3 +17,7 @@ class Invoice(BaseModel):
     subtotal: float | None
     tax_amount: float | None
     total: float | None
+
+class Problem(BaseModel):
+    field: str
+    message: str
