@@ -9,7 +9,15 @@ from app.config import MODEL_NAME
 from app.schemas import AIExtraction, Invoice
 
 load_dotenv()
-client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+_client = None
+
+
+def _get_client():
+    # Create the AI client only when it is first needed (not when the file is imported)
+    global _client
+    if _client is None:
+        _client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+    return _client
 
 MIME_TYPES = {
     ".pdf": "application/pdf",
@@ -42,7 +50,7 @@ def _call_model(contents, config=None, tries: int = 3):
     # If Google says "busy" (a server error), wait a few seconds and try again.
     for attempt in range(tries):
         try:
-            return client.models.generate_content(
+            return _get_client().models.generate_content(
                 model=MODEL_NAME, contents=contents, config=config
             )
         except errors.ServerError:
