@@ -1,10 +1,7 @@
-   # InvoiceIQ notes
+## Interview stories
 
-   invoice_01: OK
-   invoice_02: OK
-   invoice_03: OK
-   invoice_04: OK (tax_amount and total are null, which is correct)
-   invoice_05 (first prompt): PROBLEM - image is cut off, but the AI filled in amounts, tax_amount 111.6 and total 731.6 that are not visible (it calculated them).
-   invoice_05 (stricter prompt): amounts, subtotal, tax and total are now null (good). invoice_number "INV-TS" and invoice_date "2023-1" are still partial copies - to be caught by validators in Week 2.
-   invoiceiq-api Docker image: 281 MB on disk (65.8 MB compressed)
-   Day 10 review results: invoice_01-03 not flagged. invoice_04 flagged (total missing). invoice_05 flagged: date "2023-1" and missing subtotal/total caught by rules; partial invoice_number "INV-TS" caught by low AI confidence. Rules and confidence catch different mistakes.
+1. Problem: small businesses type invoice data by hand. I built a tool that reads an invoice, returns structured data, and asks a human to check only the doubtful ones.
+2. Surprise: on a cut-off invoice the AI calculated tax and total values that were not visible. A stricter prompt reduced it, but the real fix was checking the AI with plain code.
+3. Decision: I use both rules and the AI's confidence. Rules caught the incomplete date; low confidence caught a cut-off invoice number that looked valid.
+4. Things that broke: Google retired the model I used (I moved the name to one config line), the service was overloaded at times (I added retries), and tests failed without an API key (I made the AI client load only when needed).
+5. Next: a job queue, PostgreSQL, an accuracy benchmark, automated CI and a public deployment.
