@@ -3,7 +3,7 @@ from app import storage
 
 def test_save_and_list(tmp_path, monkeypatch):
     # Use a temporary database so the real one is not touched
-    monkeypatch.setattr(storage, "DB_PATH", str(tmp_path / "test.db"))
+    monkeypatch.setattr(storage, "DATABASE_URL", f"sqlite:///{(tmp_path / 'test.db').as_posix()}")
 
     new_id = storage.save_invoice("a.pdf", {"x": 1}, {"x": 2}, True)
     rows = storage.list_invoices()

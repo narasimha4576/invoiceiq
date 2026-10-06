@@ -55,7 +55,7 @@ class FakeAIError(errors.APIError):
 def client(monkeypatch, tmp_path):
     calls.clear()
     # Use a temporary database and the fake AI for every test
-    monkeypatch.setattr(storage, "DB_PATH", str(tmp_path / "test.db"))
+    monkeypatch.setattr(storage, "DATABASE_URL", f"sqlite:///{(tmp_path / 'test.db').as_posix()}")
     monkeypatch.setattr(main, "extract_with_confidence", fake_extract)
     return TestClient(main.app)
 
