@@ -1,17 +1,21 @@
 import os
 import tempfile
 
-from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi import BackgroundTasks, FastAPI, File, HTTPException, UploadFile
 from google.genai import errors
 from pydantic import BaseModel
 
 from app.extractor import MIME_TYPES, extract_with_confidence
+from app.jobs import process_job
 from app.review import check_missing_fields, review_invoice
 from app.schemas import Invoice, Problem, ReviewedInvoice
-from app.storage import list_invoices, save_invoice
+from app.storage import create_job, get_job, list_invoices, save_invoice
 from app.validators import validate_invoice
 
 app = FastAPI(title="InvoiceIQ API")
+
+# Uploaded invoices wait here until their job has been processed
+UPLOAD_DIR = os.getenv("UPLOAD_DIR", "uploads")
 
 
 class SaveRequest(BaseModel):
@@ -23,6 +27,11 @@ class SaveRequest(BaseModel):
 class SaveResponse(BaseModel):
     id: int
     remaining_problems: list[Problem]
+
+
+class JobCreated(BaseModel):
+    job_id: str
+    status: str
 
 
 @app.get("/health")
@@ -55,6 +64,35 @@ def extract(file: UploadFile = File(...)):
         )
     finally:
         os.remove(temp_path)
+
+
+@app.post("/jobs", response_model=JobCreated, status_code=202)
+def create_extraction_job(background_tasks: BackgroundTasks, file: UploadFile = File(...)):
+    extension = os.path.splitext(file.filename or "")[1].lower()
+    if extension not in MIME_TYPES:
+        raise HTTPException(status_code=400, detail="Please upload a PDF, PNG or JPG file.")
+
+    contents = file.file.read()
+    if not contents:
+        raise HTTPException(status_code=400, detail="The uploaded file is empty.")
+
+    os.makedirs(UPLOAD_DIR, exist_ok=True)
+    job_id = create_job(file.filename or "upload")
+    path = os.path.join(UPLOAD_DIR, f"{job_id}{extension}")
+    with open(path, "wb") as f:
+        f.write(contents)
+
+    # Do the slow work after the answer has been sent
+    background_tasks.add_task(process_job, job_id, path)
+    return JobCreated(job_id=job_id, status="queued")
+
+
+@app.get("/jobs/{job_id}")
+def read_job(job_id: str):
+    job = get_job(job_id)
+    if job is None:
+        raise HTTPException(status_code=404, detail="Job not found.")
+    return job
 
 
 @app.post("/invoices", response_model=SaveResponse)

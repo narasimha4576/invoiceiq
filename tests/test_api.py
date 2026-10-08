@@ -4,7 +4,7 @@ import pytest
 from fastapi.testclient import TestClient
 from google.genai import errors
 
-from app import main, storage
+from app import jobs, main, storage
 from app.schemas import AIExtraction, FieldConfidence, Invoice, LineItem
 
 calls = []  # the file paths our fake AI was asked to read
@@ -54,11 +54,12 @@ class FakeAIError(errors.APIError):
 @pytest.fixture
 def client(monkeypatch, tmp_path):
     calls.clear()
-    # Use a temporary database and the fake AI for every test
+    # Use a temporary database, a temporary upload folder and the fake AI for every test
     monkeypatch.setattr(storage, "DATABASE_URL", f"sqlite:///{(tmp_path / 'test.db').as_posix()}")
     monkeypatch.setattr(main, "extract_with_confidence", fake_extract)
+    monkeypatch.setattr(jobs, "extract_with_confidence", fake_extract)
+    monkeypatch.setattr(main, "UPLOAD_DIR", str(tmp_path / "uploads"))
     return TestClient(main.app)
-
 
 def upload(client, name="invoice.pdf", content=b"fake file bytes", kind="application/pdf"):
     return client.post("/extract", files={"file": (name, content, kind)})
@@ -140,3 +141,51 @@ def test_save_reports_remaining_problems(client):
     assert response.status_code == 200
     fields = [p["field"] for p in response.json()["remaining_problems"]]
     assert "total" in fields
+
+# ---- background jobs ----
+def upload_job(client, name="invoice.pdf", content=b"fake file bytes", kind="application/pdf"):
+    return client.post("/jobs", files={"file": (name, content, kind)})
+
+
+def test_job_is_created_and_finishes(client):
+    response = upload_job(client)
+    assert response.status_code == 202
+    job_id = response.json()["job_id"]
+
+    job = client.get(f"/jobs/{job_id}").json()
+    assert job["status"] == "done"
+    assert job["result"]["invoice"]["vendor_name"] == "Test Traders"
+    assert job["result"]["needs_review"] is False
+    assert job["error"] is None
+
+
+def test_job_file_is_deleted_after_processing(client):
+    upload_job(client)
+    assert len(calls) == 1
+    assert not os.path.exists(calls[0])
+
+
+def test_job_fails_when_ai_is_unavailable(client, monkeypatch):
+    def broken(path):
+        raise FakeAIError()
+
+    monkeypatch.setattr(jobs, "extract_with_confidence", broken)
+    job_id = upload_job(client).json()["job_id"]
+
+    job = client.get(f"/jobs/{job_id}").json()
+    assert job["status"] == "failed"
+    assert "busy" in job["error"]
+    assert job["result"] is None
+
+
+def test_job_rejects_wrong_file_type(client):
+    response = upload_job(client, name="notes.txt", content=b"hello", kind="text/plain")
+    assert response.status_code == 400
+
+
+def test_job_rejects_empty_file(client):
+    assert upload_job(client, content=b"").status_code == 400
+
+
+def test_unknown_job_returns_404(client):
+    assert client.get("/jobs/does-not-exist").status_code == 404       

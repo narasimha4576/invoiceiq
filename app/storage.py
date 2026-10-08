@@ -1,7 +1,8 @@
 import os
+import uuid
 from datetime import datetime, timezone
 
-from sqlalchemy import JSON, Boolean, DateTime, String, create_engine, select
+from sqlalchemy import JSON, Boolean, DateTime, String, Text, create_engine, select
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column
 
 # Postgres in Docker, a local SQLite file when nothing else is configured
@@ -23,11 +24,23 @@ class InvoiceRecord(Base):
     saved_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
 
 
+class JobRecord(Base):
+    __tablename__ = "jobs"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    file_name: Mapped[str] = mapped_column(String(255))
+    status: Mapped[str] = mapped_column(String(20))  # queued, processing, done, failed
+    result: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    error: Mapped[str | None] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+
 _engines = {}
 
 
 def _engine():
-    # Create the connection (and the table) the first time it is needed
+    # Create the connection (and the tables) the first time it is needed
     url = DATABASE_URL
     if url not in _engines:
         engine = create_engine(url)
@@ -64,3 +77,49 @@ def list_invoices() -> list[dict]:
             }
             for r in records
         ]
+
+
+def create_job(file_name: str) -> str:
+    job_id = str(uuid.uuid4())
+    with Session(_engine()) as session:
+        session.add(
+            JobRecord(
+                id=job_id,
+                file_name=file_name,
+                status="queued",
+                created_at=datetime.now(timezone.utc),
+            )
+        )
+        session.commit()
+    return job_id
+
+
+def update_job(job_id: str, status: str, result: dict | None = None, error: str | None = None) -> None:
+    with Session(_engine()) as session:
+        job = session.get(JobRecord, job_id)
+        if job is None:
+            return
+        job.status = status
+        if result is not None:
+            job.result = result
+        if error is not None:
+            job.error = error
+        if status in ("done", "failed"):
+            job.finished_at = datetime.now(timezone.utc)
+        session.commit()
+
+
+def get_job(job_id: str) -> dict | None:
+    with Session(_engine()) as session:
+        job = session.get(JobRecord, job_id)
+        if job is None:
+            return None
+        return {
+            "job_id": job.id,
+            "file_name": job.file_name,
+            "status": job.status,
+            "result": job.result,
+            "error": job.error,
+            "created_at": job.created_at.isoformat(),
+            "finished_at": job.finished_at.isoformat() if job.finished_at else None,
+        }

@@ -13,3 +13,17 @@ def test_save_and_list(tmp_path, monkeypatch):
     assert rows[0]["original"] == {"x": 1}
     assert rows[0]["corrected"] == {"x": 2}
     assert rows[0]["needs_review"] is True
+
+def test_job_lifecycle(tmp_path, monkeypatch):
+    monkeypatch.setattr(storage, "DATABASE_URL", f"sqlite:///{(tmp_path / 'test.db').as_posix()}")
+
+    job_id = storage.create_job("a.pdf")
+    assert storage.get_job(job_id)["status"] == "queued"
+
+    storage.update_job(job_id, "done", result={"x": 1})
+    job = storage.get_job(job_id)
+    assert job["status"] == "done"
+    assert job["result"] == {"x": 1}
+    assert job["finished_at"] is not None
+
+    assert storage.get_job("does-not-exist") is None
