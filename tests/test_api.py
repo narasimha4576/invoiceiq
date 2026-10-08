@@ -220,4 +220,15 @@ def test_worker_task_processes_a_job(tmp_path, monkeypatch):
 
     worker.process_invoice(job_id, str(invoice_file))
 
-    assert storage.get_job(job_id)["status"] == "done"      
+    assert storage.get_job(job_id)["status"] == "done" 
+
+def test_recent_jobs_list_and_filter(client):
+    upload_job(client)
+    upload_job(client)
+
+    recent = client.get("/jobs").json()
+    assert len(recent) == 2
+    assert all(j["status"] == "done" for j in recent)
+
+    assert client.get("/jobs?status=failed").json() == []
+    assert client.get("/jobs?limit=0").status_code == 422     

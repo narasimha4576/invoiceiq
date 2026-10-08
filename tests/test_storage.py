@@ -27,3 +27,18 @@ def test_job_lifecycle(tmp_path, monkeypatch):
     assert job["finished_at"] is not None
 
     assert storage.get_job("does-not-exist") is None
+
+def test_list_jobs_with_filter_and_limit(tmp_path, monkeypatch):
+    monkeypatch.setattr(storage, "DATABASE_URL", f"sqlite:///{(tmp_path / 'test.db').as_posix()}")
+
+    first = storage.create_job("a.pdf")
+    second = storage.create_job("b.pdf")
+    storage.update_job(first, "done", result={"needs_review": True})
+
+    assert {j["job_id"] for j in storage.list_jobs()} == {first, second}
+
+    done_jobs = storage.list_jobs(status="done")
+    assert len(done_jobs) == 1
+    assert done_jobs[0]["needs_review"] is True
+
+    assert len(storage.list_jobs(limit=1)) == 1

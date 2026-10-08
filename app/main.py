@@ -1,7 +1,7 @@
 import os
 import tempfile
 
-from fastapi import BackgroundTasks, FastAPI, File, HTTPException, UploadFile
+from fastapi import BackgroundTasks, FastAPI, File, HTTPException, Query, UploadFile
 from google.genai import errors
 from pydantic import BaseModel
 
@@ -9,7 +9,7 @@ from app.extractor import MIME_TYPES, extract_with_confidence
 from app.jobs import process_job
 from app.review import check_missing_fields, review_invoice
 from app.schemas import Invoice, Problem, ReviewedInvoice
-from app.storage import create_job, get_job, list_invoices, save_invoice
+from app.storage import create_job, get_job, list_invoices, list_jobs, save_invoice
 from app.validators import validate_invoice
 
 app = FastAPI(title="InvoiceIQ API")
@@ -94,6 +94,11 @@ def create_extraction_job(background_tasks: BackgroundTasks, file: UploadFile = 
         # Do the slow work after the answer has been sent
         background_tasks.add_task(process_job, job_id, path)
     return JobCreated(job_id=job_id, status="queued")
+
+
+@app.get("/jobs")
+def recent_jobs(status: str | None = None, limit: int = Query(20, ge=1, le=100)):
+    return list_jobs(status=status, limit=limit)
 
 
 @app.get("/jobs/{job_id}")

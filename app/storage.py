@@ -29,7 +29,7 @@ class JobRecord(Base):
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True)
     file_name: Mapped[str] = mapped_column(String(255))
-    status: Mapped[str] = mapped_column(String(20))  # queued, processing, done, failed
+    status: Mapped[str] = mapped_column(String(20))  # queued, processing, retrying, done, failed
     result: Mapped[dict | None] = mapped_column(JSON, nullable=True)
     error: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
@@ -123,3 +123,24 @@ def get_job(job_id: str) -> dict | None:
             "created_at": job.created_at.isoformat(),
             "finished_at": job.finished_at.isoformat() if job.finished_at else None,
         }
+
+
+def list_jobs(status: str | None = None, limit: int = 20) -> list[dict]:
+    """The most recent jobs, newest first, optionally only those with one status."""
+    with Session(_engine()) as session:
+        query = select(JobRecord)
+        if status is not None:
+            query = query.where(JobRecord.status == status)
+        query = query.order_by(JobRecord.created_at.desc()).limit(limit)
+        return [
+            {
+                "job_id": j.id,
+                "file_name": j.file_name,
+                "status": j.status,
+                "needs_review": j.result["needs_review"] if j.result else None,
+                "error": j.error,
+                "created_at": j.created_at.isoformat(),
+                "finished_at": j.finished_at.isoformat() if j.finished_at else None,
+            }
+            for j in session.scalars(query).all()
+        ]
