@@ -4,7 +4,7 @@ import pytest
 from fastapi.testclient import TestClient
 from google.genai import errors
 
-from app import jobs, main, storage
+from app import jobs, main, storage, worker
 from app.schemas import AIExtraction, FieldConfidence, Invoice, LineItem
 
 calls = []  # the file paths our fake AI was asked to read
@@ -188,4 +188,36 @@ def test_job_rejects_empty_file(client):
 
 
 def test_unknown_job_returns_404(client):
-    assert client.get("/jobs/does-not-exist").status_code == 404       
+    assert client.get("/jobs/does-not-exist").status_code == 404 
+
+
+def test_job_is_sent_to_the_worker_when_celery_is_enabled(client, monkeypatch):
+    sent = []
+
+    class FakeTask:
+        @staticmethod
+        def delay(job_id, path):
+            sent.append((job_id, path))
+
+    monkeypatch.setattr(main, "JOB_RUNNER", "celery")
+    monkeypatch.setattr(worker, "process_invoice", FakeTask)
+
+    job_id = upload_job(client).json()["job_id"]
+
+    assert len(sent) == 1
+    assert sent[0][0] == job_id
+    # Nothing has processed the job yet, so it is still waiting
+    assert client.get(f"/jobs/{job_id}").json()["status"] == "queued"
+
+
+def test_worker_task_processes_a_job(tmp_path, monkeypatch):
+    monkeypatch.setattr(storage, "DATABASE_URL", f"sqlite:///{(tmp_path / 'test.db').as_posix()}")
+    monkeypatch.setattr(jobs, "extract_with_confidence", lambda path: make_extraction())
+
+    invoice_file = tmp_path / "invoice.pdf"
+    invoice_file.write_bytes(b"fake file bytes")
+    job_id = storage.create_job("invoice.pdf")
+
+    worker.process_invoice(job_id, str(invoice_file))
+
+    assert storage.get_job(job_id)["status"] == "done"      

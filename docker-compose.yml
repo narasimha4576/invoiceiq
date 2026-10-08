@@ -13,16 +13,50 @@ services:
       timeout: 5s
       retries: 10
 
+  redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
   api:
     build: .
+    image: invoiceiq-app
     ports:
       - "8000:8000"
     env_file: .env
     environment:
       DATABASE_URL: postgresql+psycopg://invoiceiq:${POSTGRES_PASSWORD}@db:5432/invoiceiq
+      REDIS_URL: redis://redis:6379/0
+      JOB_RUNNER: celery
+      UPLOAD_DIR: /code/uploads
+    volumes:
+      - uploads:/code/uploads
     depends_on:
       db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  worker:
+    build: .
+    image: invoiceiq-app
+    command: celery -A app.worker.celery_app worker --loglevel=info --concurrency=2
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+psycopg://invoiceiq:${POSTGRES_PASSWORD}@db:5432/invoiceiq
+      REDIS_URL: redis://redis:6379/0
+      UPLOAD_DIR: /code/uploads
+    volumes:
+      - uploads:/code/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
         condition: service_healthy
 
 volumes:
   pgdata:
+  uploads:

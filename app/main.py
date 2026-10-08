@@ -17,6 +17,9 @@ app = FastAPI(title="InvoiceIQ API")
 # Uploaded invoices wait here until their job has been processed
 UPLOAD_DIR = os.getenv("UPLOAD_DIR", "uploads")
 
+# "background" runs jobs inside the API; "celery" sends them to a separate worker
+JOB_RUNNER = os.getenv("JOB_RUNNER", "background")
+
 
 class SaveRequest(BaseModel):
     file_name: str
@@ -82,8 +85,14 @@ def create_extraction_job(background_tasks: BackgroundTasks, file: UploadFile = 
     with open(path, "wb") as f:
         f.write(contents)
 
-    # Do the slow work after the answer has been sent
-    background_tasks.add_task(process_job, job_id, path)
+    if JOB_RUNNER == "celery":
+        # Put a note on the Redis message board for the worker
+        from app.worker import process_invoice
+
+        process_invoice.delay(job_id, path)
+    else:
+        # Do the slow work after the answer has been sent
+        background_tasks.add_task(process_job, job_id, path)
     return JobCreated(job_id=job_id, status="queued")
 
 
