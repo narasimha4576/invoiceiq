@@ -1,7 +1,10 @@
+import os
+import time
+
 import requests
 import streamlit as st
 
-API_URL = "http://127.0.0.1:8000"
+API_URL = os.getenv("API_URL", "http://127.0.0.1:8000")
 
 TEXT_FIELDS = ["vendor_name", "gstin", "invoice_number", "invoice_date"]
 NUMBER_FIELDS = ["subtotal", "tax_amount", "total"]
@@ -24,34 +27,117 @@ def clean_cell(value):
     return value
 
 
+def load_result(result, file_name, file_bytes, file_type):
+    """Put a finished result on the screen."""
+    st.session_state["result"] = result
+    st.session_state["file_name"] = file_name
+    st.session_state["file_bytes"] = file_bytes
+    st.session_state["file_type"] = file_type or ""
+    # A new number for every result, so old edits do not carry over
+    st.session_state["run_id"] = st.session_state.get("run_id", 0) + 1
+    st.session_state.pop("saved", None)
+
+
+def fetch_jobs():
+    """The most recent jobs, or None if the API cannot be reached."""
+    try:
+        response = requests.get(f"{API_URL}/jobs", params={"limit": 15}, timeout=10)
+        if response.status_code == 200:
+            return response.json()
+    except requests.exceptions.RequestException:
+        pass
+    return None
+
+
+def wait_for_job(job_id: str, status_box, timeout_seconds: int = 240):
+    """Check the job every 2 seconds until it is finished."""
+    waited = 0
+    while waited < timeout_seconds:
+        response = requests.get(f"{API_URL}/jobs/{job_id}", timeout=10)
+        if response.status_code != 200:
+            return None, f"Could not read the job ({response.status_code})."
+        job = response.json()
+        if job["status"] in ("done", "failed"):
+            return job, None
+        status_box.info(f"Job status: {job['status']} ... ({waited} seconds)")
+        time.sleep(2)
+        waited += 2
+    return None, "Still waiting after 4 minutes. Check the recent jobs list later."
+
+
 st.set_page_config(page_title="InvoiceIQ", layout="wide")
 st.title("InvoiceIQ - invoice review")
 
+# ---- Sidebar: recent jobs ----
+with st.sidebar:
+    st.header("Recent jobs")
+    st.button("Refresh list")  # any click re-runs the page and reloads the list
+    recent = fetch_jobs()
+    if recent is None:
+        st.caption("Cannot reach the API.")
+    elif not recent:
+        st.caption("No jobs yet.")
+    else:
+        st.dataframe(
+            [
+                {
+                    "file": j["file_name"],
+                    "status": j["status"],
+                    "needs review": {True: "yes", False: "no"}.get(j["needs_review"], "-"),
+                }
+                for j in recent
+            ]
+        )
+        finished = {
+            f"{j['file_name']} ({j['job_id'][:8]})": j["job_id"]
+            for j in recent
+            if j["status"] == "done"
+        }
+        if finished:
+            choice = st.selectbox("Open a finished job", list(finished))
+            if st.button("Open"):
+                response = requests.get(f"{API_URL}/jobs/{finished[choice]}", timeout=10)
+                if response.status_code == 200:
+                    job = response.json()
+                    load_result(job["result"], job["file_name"], None, "")
+                else:
+                    st.error("Could not open that job.")
+
+# ---- Upload and wait for the result ----
 uploaded = st.file_uploader("Upload an invoice", type=["pdf", "png", "jpg", "jpeg"])
 
 if uploaded is not None and st.button("Extract invoice"):
-    with st.spinner("Reading the invoice..."):
-        try:
-            response = requests.post(
-                f"{API_URL}/extract",
-                files={"file": (uploaded.name, uploaded.getvalue(), uploaded.type)},
-                timeout=120,
-            )
-        except requests.exceptions.ConnectionError:
-            st.error("Cannot reach the API. Is it running? Start it with: uvicorn app.main:app --reload")
-            st.stop()
+    status_box = st.empty()
+    try:
+        response = requests.post(
+            f"{API_URL}/jobs",
+            files={"file": (uploaded.name, uploaded.getvalue(), uploaded.type)},
+            timeout=60,
+        )
+    except requests.exceptions.ConnectionError:
+        st.error("Cannot reach the API. Is it running? Start it with: docker compose up")
+        st.stop()
 
-    if response.status_code == 200:
-        st.session_state["result"] = response.json()
-        st.session_state["file_name"] = uploaded.name
-        st.session_state["file_bytes"] = uploaded.getvalue()
-        st.session_state["file_type"] = uploaded.type
-        # A new number for every extraction, so old edits do not carry over
-        st.session_state["run_id"] = st.session_state.get("run_id", 0) + 1
-        st.session_state.pop("saved", None)
-    else:
+    if response.status_code != 202:
         st.error(f"The API returned an error ({response.status_code}): {response.text}")
+        st.stop()
 
+    job_id = response.json()["job_id"]
+    status_box.info("Invoice sent. Waiting for the worker...")
+    try:
+        job, problem = wait_for_job(job_id, status_box)
+    except requests.exceptions.RequestException:
+        job, problem = None, "Lost the connection to the API while waiting."
+    status_box.empty()
+
+    if problem:
+        st.error(problem)
+    elif job["status"] == "failed":
+        st.error(f"The job failed: {job['error']}")
+    else:
+        load_result(job["result"], uploaded.name, uploaded.getvalue(), uploaded.type)
+
+# ---- Show the result and let a person correct it ----
 result = st.session_state.get("result")
 
 if result is not None:
@@ -65,8 +151,11 @@ if result is not None:
 
     with left:
         st.subheader(st.session_state["file_name"])
-        if st.session_state["file_type"].startswith("image/"):
-            st.image(st.session_state["file_bytes"])
+        file_bytes = st.session_state.get("file_bytes")
+        if file_bytes is None:
+            st.info("No preview: the uploaded file is deleted after processing.")
+        elif st.session_state["file_type"].startswith("image/"):
+            st.image(file_bytes)
         else:
             st.info("A preview is only shown for images. This file is a PDF.")
 
