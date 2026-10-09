@@ -1,6 +1,6 @@
 # InvoiceIQ
 
-AI-powered invoice extraction with a human-review safety net. Upload an invoice (PDF, PNG or JPG) and get structured JSON back, with a confidence score for every field and a clear flag when a person should double-check it.
+AI-powered invoice extraction with a human-review safety net. Upload an invoice (PDF, PNG or JPG) and get structured JSON back, with a confidence score for every field and a clear flag when a person should double-check it. Invoices are processed in the background by a worker, so uploads never make the user wait.
 
 ![Review screen](docs/review-screen.png)
 
@@ -8,18 +8,42 @@ AI-powered invoice extraction with a human-review safety net. Upload an invoice 
 - Reads invoices with a vision-capable AI model (Google Gemini) and returns clean JSON
 - Returns `null` for anything missing or cut off, instead of guessing
 - Checks the AI's answer with plain code (maths, GSTIN, tax rate, date, missing fields)
-- Combines those checks with the AI's own confidence scores to set `needs_review`
-- Lets a person correct the flagged fields in a review screen and saves both the AI's answer and the corrected version
+- Combines those checks with the AI's confidence scores to set `needs_review`
+- Processes uploads as background jobs (Redis and Celery), with retries when the AI service is busy
+- Lets a person correct flagged fields in a review screen, and stores both the AI's answer and the corrected version in PostgreSQL
 
-## How it works
+## Architecture
 ```mermaid
 flowchart LR
     U[Review screen - Streamlit] -->|upload invoice| A[FastAPI]
-    A -->|PDF or image| G[Gemini API]
-    G -->|JSON and confidence| A
-    A --> V[Validators and review flag]
-    V --> A
-    A -->|save original and corrected| D[(SQLite)]
+    A -->|create job| D[(PostgreSQL)]
+    A -->|send task| R[(Redis queue)]
+    R --> W[Celery worker]
+    W -->|PDF or image| G[Gemini API]
+    G -->|JSON and confidence| W
+    W -->|checked result| D
+    U -->|poll job status| A
+```
+
+How one invoice flows:
+```mermaid
+sequenceDiagram
+    participant U as Review screen
+    participant A as API
+    participant R as Redis
+    participant W as Worker
+    participant G as Gemini
+    participant D as PostgreSQL
+    U->>A: POST /jobs (invoice file)
+    A->>D: create job (queued)
+    A->>R: send task
+    A-->>U: 202 and job id
+    W->>R: take task
+    W->>G: read invoice
+    G-->>W: JSON and confidence
+    W->>D: store checked result (done)
+    U->>A: GET /jobs/{id} every 2 seconds
+    A-->>U: status, then the result
 ```
 
 ## Why the AI is not trusted blindly
@@ -35,72 +59,81 @@ The AI can misread an invoice or invent values for parts it cannot see. So every
 | Missing fields | a required value is empty |
 | AI confidence | the model itself says it is unsure (below 0.8) |
 
-Rules and confidence catch different mistakes. For example, a rule catches the half-visible date `2023-1`, while low confidence catches a cut-off invoice number that looks valid.
+Rules and confidence catch different mistakes. A rule catches a half-visible date like `2023-1`, while low confidence catches a cut-off invoice number that looks valid.
+
+## Reliability
+- **Retries:** a busy or rate-limited AI service is retried up to 3 times with growing waits. Permanent errors (such as a wrong API key) fail immediately.
+- **No lost jobs:** tasks wait in Redis, so a job uploaded while the worker is down is processed when it returns.
+- **Health checks:** `/health/ready` checks the database and Redis, and Docker uses it to mark the API healthy or unhealthy.
+- **Tests:** about 60 automated tests run with a fake AI, so they need no API key and no internet.
+- **Smoke test:** `smoke_test.py` checks a running system from end to end.
+
+![Running containers](docs/compose-ps.png)
 
 ## API
 | Endpoint | Purpose |
 |---|---|
 | `GET /health` | Is the service running? |
-| `POST /extract` | Upload an invoice, get the reviewed result |
+| `GET /health/ready` | Are the database and Redis reachable? |
+| `POST /jobs` | Upload an invoice, get a job id (202) |
+| `GET /jobs/{id}` | Job status, and the reviewed result when done |
+| `GET /jobs` | Recent jobs (optional `status` and `limit`) |
+| `POST /extract` | Upload and wait for the result in one call |
 | `POST /invoices` | Save an original and a corrected invoice |
 | `GET /invoices` | List saved invoices |
 
-Shortened example response from `POST /extract` for a cut-off invoice:
-```json
-{
-  "invoice": {
-    "vendor_name": "Apex Digital Solutions",
-    "invoice_number": "INV-TS-1001",
-    "subtotal": 620.0,
-    "tax_amount": null,
-    "total": null
-  },
-  "problems": [{"field": "total", "message": "value is missing or not readable"}],
-  "low_confidence_fields": [],
-  "needs_review": true
-}
+## Run with Docker (recommended)
+```bash
+cp .env.example .env
+# edit .env: add your Gemini API key and choose a database password
+docker compose up --build
+```
+The API is at http://localhost:8000/docs. Start the review screen in a second terminal:
+```bash
+pip install -r requirements-ui.txt
+streamlit run ui/review_app.py
 ```
 
-## Run locally
+## Run without Docker
 ```bash
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
-Create a `.env` file containing `GEMINI_API_KEY=your_key_here`, then open http://127.0.0.1:8000/docs
+This uses a local SQLite file and runs jobs inside the API, so Redis and the worker are not needed.
 
-Review screen (in a second terminal):
-```bash
-pip install -r requirements-ui.txt
-streamlit run ui/review_app.py
-```
+## Configuration
+| Variable | Used by | Meaning |
+|---|---|---|
+| `GEMINI_API_KEY` | API, worker | Your Google AI key |
+| `POSTGRES_PASSWORD` | database, compose | Local database password |
+| `DATABASE_URL` | API, worker | Set by compose. Defaults to a local SQLite file |
+| `REDIS_URL` | API, worker | Set by compose |
+| `JOB_RUNNER` | API | `celery` (separate worker) or `background` (default) |
+| `UPLOAD_DIR` | API, worker | Where uploads wait until processed |
+| `API_URL` | review screen | Address of the API |
 
-## Run with Docker
-```bash
-docker build -t invoiceiq-api .
-docker run --rm -p 8000:8000 --env-file .env invoiceiq-api
-```
-
-## Run the tests
+## Tests
 ```bash
 pip install -r requirements-dev.txt
 pytest
+python smoke_test.py   # needs the system running; uses the real AI
 ```
-The tests use a fake AI, so they need no API key and no internet.
 
 ## Project structure
 ```
-app/        API, AI extraction, validators, review logic, storage
+app/        API, AI extraction, validators, review logic, jobs, worker, storage
 ui/         Streamlit review screen
 tests/      Unit and API tests
 samples/    Fake invoices for testing
+docs/       Screenshots
 ```
 
-## Roadmap
-- Background job queue and PostgreSQL
-- Accuracy benchmark on a labelled set of invoices
-- Automated tests and image builds with GitHub Actions
+## Status and roadmap
+Accuracy has not been measured on a labelled set yet. Next:
+- Accuracy benchmark on labelled invoices
+- GitHub Actions: automatic tests and image builds
 - Public deployment
 
 All sample invoices are fake.
