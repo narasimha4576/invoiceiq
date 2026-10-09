@@ -6,6 +6,7 @@ from google.genai import errors
 from pydantic import BaseModel
 
 from app.extractor import MIME_TYPES, extract_with_confidence
+from app.health import check_database, check_redis
 from app.jobs import process_job
 from app.review import check_missing_fields, review_invoice
 from app.schemas import Invoice, Problem, ReviewedInvoice
@@ -40,6 +41,31 @@ class JobCreated(BaseModel):
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
+
+@app.get("/health/ready")
+def ready():
+    """Is everything this service depends on working right now?"""
+    checks = {}
+    failures = {}
+
+    try:
+        checks["database"] = check_database()
+    except Exception as error:
+        # Report only the kind of error, never its text (it could contain secrets)
+        failures["database"] = type(error).__name__
+
+    if JOB_RUNNER == "celery":
+        try:
+            checks["redis"] = check_redis(os.getenv("REDIS_URL", "redis://localhost:6379/0"))
+        except Exception as error:
+            failures["redis"] = type(error).__name__
+    else:
+        checks["redis"] = "not used"
+
+    if failures:
+        raise HTTPException(status_code=503, detail=failures)
+    return {"status": "ok", **checks}
 
 
 @app.post("/extract", response_model=ReviewedInvoice)

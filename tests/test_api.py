@@ -231,4 +231,27 @@ def test_recent_jobs_list_and_filter(client):
     assert all(j["status"] == "done" for j in recent)
 
     assert client.get("/jobs?status=failed").json() == []
-    assert client.get("/jobs?limit=0").status_code == 422     
+    assert client.get("/jobs?limit=0").status_code == 422
+
+# ---- readiness check ----
+def test_ready_reports_database_ok(client):
+    body = client.get("/health/ready").json()
+    assert body["status"] == "ok"
+    assert body["database"] == "ok"
+    assert body["redis"] == "not used"
+
+
+def test_ready_returns_503_when_database_is_down(client, monkeypatch):
+    def broken():
+        raise RuntimeError("database is down")
+
+    monkeypatch.setattr(main, "check_database", broken)
+    response = client.get("/health/ready")
+    assert response.status_code == 503
+    assert response.json()["detail"] == {"database": "RuntimeError"}
+
+
+def test_ready_checks_redis_when_celery_is_enabled(client, monkeypatch):
+    monkeypatch.setattr(main, "JOB_RUNNER", "celery")
+    monkeypatch.setattr(main, "check_redis", lambda url: "ok")
+    assert client.get("/health/ready").json()["redis"] == "ok"     
