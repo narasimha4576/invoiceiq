@@ -1,0 +1,1436 @@
+[
+  {
+    "file": "inv_001.pdf",
+    "kind": "clean_pdf",
+    "invoice": {
+      "vendor_name": "Sai Krishna Agencies",
+      "gstin": "37IZAYZ2654E4ZL",
+      "invoice_number": "INV-SV-1001",
+      "invoice_date": "2023-08-14",
+      "line_items": [
+        {
+          "description": "Laptop Stand",
+          "quantity": 9.0,
+          "unit_price": 1999.3,
+          "amount": 17993.7
+        },
+        {
+          "description": "Wireless Mouse",
+          "quantity": 35.0,
+          "unit_price": 306.51,
+          "amount": 10727.85
+        },
+        {
+          "description": "Headphones",
+          "quantity": 28.0,
+          "unit_price": 804.88,
+          "amount": 22536.64
+        },
+        {
+          "description": "Notebook (Pack of 5)",
+          "quantity": 6.0,
+          "unit_price": 215.59,
+          "amount": 1293.54
+        },
+        {
+          "description": "Cloud Hosting (Monthly)",
+          "quantity": 33.0,
+          "unit_price": 8020.19,
+          "amount": 264666.27
+        },
+        {
+          "description": "Whiteboard Markers (Set)",
+          "quantity": 36.0,
+          "unit_price": 175.67,
+          "amount": 6324.12
+        }
+      ],
+      "subtotal": 323542.12,
+      "tax_amount": 58237.58,
+      "total": 381779.7
+    }
+  },
+  {
+    "file": "inv_002.pdf",
+    "kind": "clean_pdf",
+    "invoice": {
+      "vendor_name": "Sai Krishna Agencies",
+      "gstin": "36DMCRJ9593W2Z2",
+      "invoice_number": "INV-MC-1002",
+      "invoice_date": "2025-01-17",
+      "line_items": [
+        {
+          "description": "Headphones",
+          "quantity": 23.0,
+          "unit_price": 2692.3,
+          "amount": 61922.9
+        }
+      ],
+      "subtotal": 61922.9,
+      "tax_amount": 3096.15,
+      "total": 65019.05
+    }
+  },
+  {
+    "file": "inv_003.pdf",
+    "kind": "clean_pdf",
+    "invoice": {
+      "vendor_name": "Rayalaseema Enterprises",
+      "gstin": "29FLLGV4192R4ZA",
+      "invoice_number": "INV-BM-1003",
+      "invoice_date": "12/10/2024",
+      "line_items": [
+        {
+          "description": "Desk Lamp",
+          "quantity": 7.0,
+          "unit_price": 1146.21,
+          "amount": 8023.47
+        }
+      ],
+      "subtotal": 8023.47,
+      "tax_amount": 1444.22,
+      "total": 9467.69
+    }
+  },
+  {
+    "file": "inv_004.pdf",
+    "kind": "clean_pdf",
+    "invoice": {
+      "vendor_name": "Tungabhadra Enterprises",
+      "gstin": "19HXRRI9696L4Z8",
+      "invoice_number": "INV-TE-1004",
+      "invoice_date": "27/05/2023",
+      "line_items": [
+        {
+          "description": "Desk Lamp",
+          "quantity": 3.0,
+          "unit_price": 1868.58,
+          "amount": 5605.74
+        },
+        {
+          "description": "Webcam HD",
+          "quantity": 26.0,
+          "unit_price": 1596.13,
+          "amount": 41499.38
+        },
+        {
+          "description": "Printer Paper A4 (500 sheets)",
+          "quantity": 14.0,
+          "unit_price": 528.28,
+          "amount": 7395.92
+        },
+        {
+          "description": "Power Strip",
+          "quantity": 37.0,
+          "unit_price": 819.64,
+          "amount": 30326.68
+        },
+        {
+          "description": "Wireless Mouse",
+          "quantity": 21.0,
+          "unit_price": 388.21,
+          "amount": 8152.41
+        },
+        {
+          "description": "Laptop Stand",
+          "quantity": 32.0,
+          "unit_price": 1351.7,
+          "amount": 43254.4
+        }
+      ],
+      "subtotal": 136234.53,
+      "tax_amount": 24522.22,
+      "total": 160756.75
+    }
+  },
+  {
+    "file": "inv_005.pdf",
+    "kind": "clean_pdf",
+    "invoice": {
+      "vendor_name": "Tungabhadra Enterprises",
+      "gstin": "32FOAXX4828D5ZW",
+      "invoice_number": "INV-TE-1005",
+      "invoice_date": "2023-04-25",
+      "line_items": [
+        {
+          "description": "Mechanical Keyboard",
+          "quantity": 39.0,
+          "unit_price": 1785.87,
+          "amount": 69648.93
+        },
+        {
+          "description": "Whiteboard Markers (Set)",
+          "quantity": 25.0,
+          "unit_price": 286.85,
+          "amount": 7171.25
+        },
+        {
+          "description": "Cloud Hosting (Monthly)",
+          "quantity": 30.0,
+          "unit_price": 7291.14,
+          "amount": 218734.2
+        },
+        {
+          "description": "USB-C Cable",
+          "quantity": 36.0,
+          "unit_price": 533.17,
+          "amount": 19194.12
+        },
+        {
+          "description": "Webcam HD",
+          "quantity": 1.0,
+          "unit_price": 2668.74,
+          "amount": 2668.74
+        },
+        {
+          "description": "Power Strip",
+          "quantity": 8.0,
+          "unit_price": 693.11,
+          "amount": 5544.88
+        },
+        {
+          "description": "Ballpoint Pens (Box)",
+          "quantity": 35.0,
+          "unit_price": 207.65,
+          "amount": 7267.75
+        }
+      ],
+      "subtotal": 330229.87,
+      "tax_amount": 59441.38,
+      "total": 389671.25
+    }
+  },
+  {
+    "file": "inv_006.pdf",
+    "kind": "clean_pdf",
+    "invoice": {
+      "vendor_name": "Rayalaseema Enterprises",
+      "gstin": "27HBHSC1718Y3Z8",
+      "invoice_number": "INV-MC-1006",
+      "invoice_date": "18/06/2025",
+      "line_items": [
+        {
+          "description": "Printer Paper A4 (500 sheets)",
+          "quantity": 34.0,
+          "unit_price": 529.62,
+          "amount": 18007.08
+        },
+        {
+          "description": "Office Chair",
+          "quantity": 39.0,
+          "unit_price": 5282.86,
+          "amount": 206031.54
+        },
+        {
+          "description": "Power Strip",
+          "quantity": 2.0,
+          "unit_price": 322.71,
+          "amount": 645.42
+        }
+      ],
+      "subtotal": 224684.04,
+      "tax_amount": 40443.12,
+      "total": 265127.16
+    }
+  },
+  {
+    "file": "inv_007.pdf",
+    "kind": "clean_pdf",
+    "invoice": {
+      "vendor_name": "Bharat Stationery Mart",
+      "gstin": "24CKASR3930C1ZE",
+      "invoice_number": "INV-SV-1007",
+      "invoice_date": "2023-05-04",
+      "line_items": [
+        {
+          "description": "Whiteboard Markers (Set)",
+          "quantity": 13.0,
+          "unit_price": 319.63,
+          "amount": 4155.19
+        },
+        {
+          "description": "Laptop Stand",
+          "quantity": 26.0,
+          "unit_price": 2490.78,
+          "amount": 64760.28
+        },
+        {
+          "description": "Office Chair",
+          "quantity": 24.0,
+          "unit_price": 5909.55,
+          "amount": 141829.2
+        }
+      ],
+      "subtotal": 210744.67,
+      "tax_amount": 37934.04,
+      "total": 248678.71
+    }
+  },
+  {
+    "file": "inv_008.pdf",
+    "kind": "clean_pdf",
+    "invoice": {
+      "vendor_name": "Lakshmi Office Supplies",
+      "gstin": "37SPHZP6311V7ZM",
+      "invoice_number": "INV-BM-1008",
+      "invoice_date": "06/07/2024",
+      "line_items": [
+        {
+          "description": "Desk Lamp",
+          "quantity": 18.0,
+          "unit_price": 1637.26,
+          "amount": 29470.68
+        }
+      ],
+      "subtotal": 29470.68,
+      "tax_amount": 5304.72,
+      "total": 34775.4
+    }
+  },
+  {
+    "file": "inv_009.pdf",
+    "kind": "clean_pdf",
+    "invoice": {
+      "vendor_name": "Kaveri Electronics",
+      "gstin": "24FNPPG6026A7ZG",
+      "invoice_number": "INV-BM-1009",
+      "invoice_date": "19/09/2025",
+      "line_items": [
+        {
+          "description": "Mechanical Keyboard",
+          "quantity": 22.0,
+          "unit_price": 5102.67,
+          "amount": 112258.74
+        },
+        {
+          "description": "Webcam HD",
+          "quantity": 7.0,
+          "unit_price": 1546.51,
+          "amount": 10825.57
+        },
+        {
+          "description": "External Hard Drive 1TB",
+          "quantity": 13.0,
+          "unit_price": 4969.74,
+          "amount": 64606.62
+        },
+        {
+          "description": "Whiteboard Markers (Set)",
+          "quantity": 9.0,
+          "unit_price": 238.13,
+          "amount": 2143.17
+        },
+        {
+          "description": "Cloud Hosting (Monthly)",
+          "quantity": 18.0,
+          "unit_price": 6626.28,
+          "amount": 119273.04
+        },
+        {
+          "description": "Wireless Mouse",
+          "quantity": 5.0,
+          "unit_price": 538.03,
+          "amount": 2690.15
+        },
+        {
+          "description": "Ballpoint Pens (Box)",
+          "quantity": 36.0,
+          "unit_price": 96.64,
+          "amount": 3479.04
+        }
+      ],
+      "subtotal": 315276.33,
+      "tax_amount": 15763.82,
+      "total": 331040.15
+    }
+  },
+  {
+    "file": "inv_010.pdf",
+    "kind": "clean_pdf",
+    "invoice": {
+      "vendor_name": "Kohinoor Wholesale",
+      "gstin": "09VHMDS3990T2ZQ",
+      "invoice_number": "INV-MC-1010",
+      "invoice_date": "12-Mar-2023",
+      "line_items": [
+        {
+          "description": "Cloud Hosting (Monthly)",
+          "quantity": 38.0,
+          "unit_price": 9357.37,
+          "amount": 355580.06
+        },
+        {
+          "description": "USB-C Cable",
+          "quantity": 4.0,
+          "unit_price": 479.03,
+          "amount": 1916.12
+        },
+        {
+          "description": "Laptop Stand",
+          "quantity": 4.0,
+          "unit_price": 695.27,
+          "amount": 2781.08
+        },
+        {
+          "description": "Notebook (Pack of 5)",
+          "quantity": 31.0,
+          "unit_price": 300.86,
+          "amount": 9326.66
+        },
+        {
+          "description": "Whiteboard Markers (Set)",
+          "quantity": 34.0,
+          "unit_price": 164.08,
+          "amount": 5578.72
+        },
+        {
+          "description": "Wireless Mouse",
+          "quantity": 33.0,
+          "unit_price": 302.07,
+          "amount": 9968.31
+        }
+      ],
+      "subtotal": 385150.95,
+      "tax_amount": 69327.17,
+      "total": 454478.12
+    }
+  },
+  {
+    "file": "inv_011.pdf",
+    "kind": "clean_pdf",
+    "invoice": {
+      "vendor_name": "Sai Krishna Agencies",
+      "gstin": "37SDCRG8425C4ZN",
+      "invoice_number": "INV-LO-1011",
+      "invoice_date": "2023-01-10",
+      "line_items": [
+        {
+          "description": "Ballpoint Pens (Box)",
+          "quantity": 21.0,
+          "unit_price": 120.58,
+          "amount": 2532.18
+        },
+        {
+          "description": "Webcam HD",
+          "quantity": 26.0,
+          "unit_price": 1240.28,
+          "amount": 32247.28
+        },
+        {
+          "description": "Headphones",
+          "quantity": 20.0,
+          "unit_price": 2208.84,
+          "amount": 44176.8
+        }
+      ],
+      "subtotal": 78956.26,
+      "tax_amount": 3947.81,
+      "total": 82904.07
+    }
+  },
+  {
+    "file": "inv_012.pdf",
+    "kind": "clean_pdf",
+    "invoice": {
+      "vendor_name": "Sai Krishna Agencies",
+      "gstin": "27BCUNI0052U5ZA",
+      "invoice_number": "INV-MC-1012",
+      "invoice_date": "01/06/2024",
+      "line_items": [
+        {
+          "description": "Monitor 24 inch",
+          "quantity": 20.0,
+          "unit_price": 13522.29,
+          "amount": 270445.8
+        },
+        {
+          "description": "Cloud Hosting (Monthly)",
+          "quantity": 7.0,
+          "unit_price": 11389.3,
+          "amount": 79725.1
+        },
+        {
+          "description": "Power Strip",
+          "quantity": 9.0,
+          "unit_price": 421.9,
+          "amount": 3797.1
+        },
+        {
+          "description": "Webcam HD",
+          "quantity": 7.0,
+          "unit_price": 2830.28,
+          "amount": 19811.96
+        },
+        {
+          "description": "Office Chair",
+          "quantity": 10.0,
+          "unit_price": 4997.92,
+          "amount": 49979.2
+        },
+        {
+          "description": "Wireless Mouse",
+          "quantity": 39.0,
+          "unit_price": 386.91,
+          "amount": 15089.49
+        },
+        {
+          "description": "Headphones",
+          "quantity": 22.0,
+          "unit_price": 1371.87,
+          "amount": 30181.14
+        }
+      ],
+      "subtotal": 469029.79,
+      "tax_amount": 84425.36,
+      "total": 553455.15
+    }
+  },
+  {
+    "file": "inv_013.png",
+    "kind": "clean_png",
+    "invoice": {
+      "vendor_name": "Bharat Stationery Mart",
+      "gstin": "09LYRNT2322N1ZB",
+      "invoice_number": "INV-MC-1013",
+      "invoice_date": "29/11/2024",
+      "line_items": [
+        {
+          "description": "Wireless Mouse",
+          "quantity": 35.0,
+          "unit_price": 273.42,
+          "amount": 9569.7
+        },
+        {
+          "description": "Mechanical Keyboard",
+          "quantity": 24.0,
+          "unit_price": 4121.29,
+          "amount": 98910.96
+        },
+        {
+          "description": "External Hard Drive 1TB",
+          "quantity": 10.0,
+          "unit_price": 4618.3,
+          "amount": 46183.0
+        },
+        {
+          "description": "Headphones",
+          "quantity": 3.0,
+          "unit_price": 1717.25,
+          "amount": 5151.75
+        },
+        {
+          "description": "USB-C Cable",
+          "quantity": 3.0,
+          "unit_price": 551.48,
+          "amount": 1654.44
+        }
+      ],
+      "subtotal": 161469.85,
+      "tax_amount": 29064.57,
+      "total": 190534.42
+    }
+  },
+  {
+    "file": "inv_014.png",
+    "kind": "clean_png",
+    "invoice": {
+      "vendor_name": "Rayalaseema Enterprises",
+      "gstin": "36KADIF9401T7ZM",
+      "invoice_number": "INV-MC-1014",
+      "invoice_date": "26/11/2024",
+      "line_items": [
+        {
+          "description": "Desk Lamp",
+          "quantity": 3.0,
+          "unit_price": 1959.61,
+          "amount": 5878.83
+        },
+        {
+          "description": "Notebook (Pack of 5)",
+          "quantity": 15.0,
+          "unit_price": 209.87,
+          "amount": 3148.05
+        },
+        {
+          "description": "USB-C Cable",
+          "quantity": 30.0,
+          "unit_price": 287.84,
+          "amount": 8635.2
+        },
+        {
+          "description": "Power Strip",
+          "quantity": 15.0,
+          "unit_price": 394.9,
+          "amount": 5923.5
+        },
+        {
+          "description": "Headphones",
+          "quantity": 13.0,
+          "unit_price": 2014.94,
+          "amount": 26194.22
+        },
+        {
+          "description": "Mechanical Keyboard",
+          "quantity": 18.0,
+          "unit_price": 5389.59,
+          "amount": 97012.62
+        },
+        {
+          "description": "Ballpoint Pens (Box)",
+          "quantity": 18.0,
+          "unit_price": 139.69,
+          "amount": 2514.42
+        }
+      ],
+      "subtotal": 149306.84,
+      "tax_amount": 26875.23,
+      "total": 176182.07
+    }
+  },
+  {
+    "file": "inv_015.png",
+    "kind": "clean_png",
+    "invoice": {
+      "vendor_name": "Maruthi Computers",
+      "gstin": "09XJQJV6564R3ZC",
+      "invoice_number": "INV-BM-1015",
+      "invoice_date": "30-Sep-2024",
+      "line_items": [
+        {
+          "description": "Laptop Stand",
+          "quantity": 3.0,
+          "unit_price": 1946.69,
+          "amount": 5840.07
+        },
+        {
+          "description": "Ballpoint Pens (Box)",
+          "quantity": 1.0,
+          "unit_price": 168.39,
+          "amount": 168.39
+        },
+        {
+          "description": "Monitor 24 inch",
+          "quantity": 35.0,
+          "unit_price": 11808.0,
+          "amount": 413280.0
+        },
+        {
+          "description": "Cloud Hosting (Monthly)",
+          "quantity": 13.0,
+          "unit_price": 5642.21,
+          "amount": 73348.73
+        },
+        {
+          "description": "Notebook (Pack of 5)",
+          "quantity": 5.0,
+          "unit_price": 434.66,
+          "amount": 2173.3
+        }
+      ],
+      "subtotal": 494810.49,
+      "tax_amount": 89065.88,
+      "total": 583876.37
+    }
+  },
+  {
+    "file": "inv_016.png",
+    "kind": "clean_png",
+    "invoice": {
+      "vendor_name": "Kaveri Electronics",
+      "gstin": "27QVUTK1343Z4Z9",
+      "invoice_number": "INV-SV-1016",
+      "invoice_date": "2024-11-05",
+      "line_items": [
+        {
+          "description": "Printer Paper A4 (500 sheets)",
+          "quantity": 1.0,
+          "unit_price": 375.97,
+          "amount": 375.97
+        },
+        {
+          "description": "Monitor 24 inch",
+          "quantity": 14.0,
+          "unit_price": 10009.22,
+          "amount": 140129.08
+        },
+        {
+          "description": "External Hard Drive 1TB",
+          "quantity": 38.0,
+          "unit_price": 5201.98,
+          "amount": 197675.24
+        },
+        {
+          "description": "Notebook (Pack of 5)",
+          "quantity": 21.0,
+          "unit_price": 289.5,
+          "amount": 6079.5
+        },
+        {
+          "description": "Ballpoint Pens (Box)",
+          "quantity": 29.0,
+          "unit_price": 194.86,
+          "amount": 5650.94
+        },
+        {
+          "description": "Office Chair",
+          "quantity": 33.0,
+          "unit_price": 6102.52,
+          "amount": 201383.16
+        }
+      ],
+      "subtotal": 551293.89,
+      "tax_amount": 99232.9,
+      "total": 650526.79
+    }
+  },
+  {
+    "file": "inv_017.png",
+    "kind": "clean_png",
+    "invoice": {
+      "vendor_name": "Annapurna Distributors",
+      "gstin": "24FZWQO0831O3ZT",
+      "invoice_number": "INV-MC-1017",
+      "invoice_date": "08-Mar-2025",
+      "line_items": [
+        {
+          "description": "USB-C Cable",
+          "quantity": 37.0,
+          "unit_price": 213.33,
+          "amount": 7893.21
+        },
+        {
+          "description": "Desk Lamp",
+          "quantity": 25.0,
+          "unit_price": 1340.44,
+          "amount": 33511.0
+        },
+        {
+          "description": "Ballpoint Pens (Box)",
+          "quantity": 16.0,
+          "unit_price": 105.09,
+          "amount": 1681.44
+        },
+        {
+          "description": "Webcam HD",
+          "quantity": 1.0,
+          "unit_price": 3220.92,
+          "amount": 3220.92
+        }
+      ],
+      "subtotal": 46306.57,
+      "tax_amount": 2315.33,
+      "total": 48621.9
+    }
+  },
+  {
+    "file": "inv_018.png",
+    "kind": "clean_png",
+    "invoice": {
+      "vendor_name": "Maruthi Computers",
+      "gstin": "29RCEEH6231N7ZL",
+      "invoice_number": "INV-TE-1018",
+      "invoice_date": "06/10/2023",
+      "line_items": [
+        {
+          "description": "External Hard Drive 1TB",
+          "quantity": 29.0,
+          "unit_price": 6160.79,
+          "amount": 178662.91
+        },
+        {
+          "description": "Monitor 24 inch",
+          "quantity": 31.0,
+          "unit_price": 10150.49,
+          "amount": 314665.19
+        },
+        {
+          "description": "Whiteboard Markers (Set)",
+          "quantity": 16.0,
+          "unit_price": 355.16,
+          "amount": 5682.56
+        },
+        {
+          "description": "Headphones",
+          "quantity": 18.0,
+          "unit_price": 3227.19,
+          "amount": 58089.42
+        },
+        {
+          "description": "Office Chair",
+          "quantity": 34.0,
+          "unit_price": 6165.28,
+          "amount": 209619.52
+        },
+        {
+          "description": "Ballpoint Pens (Box)",
+          "quantity": 16.0,
+          "unit_price": 126.68,
+          "amount": 2026.88
+        },
+        {
+          "description": "Power Strip",
+          "quantity": 5.0,
+          "unit_price": 713.8,
+          "amount": 3569.0
+        }
+      ],
+      "subtotal": 772315.48,
+      "tax_amount": 139016.79,
+      "total": 911332.27
+    }
+  },
+  {
+    "file": "inv_019.png",
+    "kind": "clean_png",
+    "invoice": {
+      "vendor_name": "Southern Star Supplies",
+      "gstin": "37MPALJ6688Z4ZV",
+      "invoice_number": "INV-KE-1019",
+      "invoice_date": "27/05/2025",
+      "line_items": [
+        {
+          "description": "Ballpoint Pens (Box)",
+          "quantity": 27.0,
+          "unit_price": 146.21,
+          "amount": 3947.67
+        }
+      ],
+      "subtotal": 3947.67,
+      "tax_amount": 197.38,
+      "total": 4145.05
+    }
+  },
+  {
+    "file": "inv_020.png",
+    "kind": "clean_png",
+    "invoice": {
+      "vendor_name": "Blue Orchid Services LLP",
+      "gstin": "32EOFBI6537K6ZO",
+      "invoice_number": "INV-LO-1020",
+      "invoice_date": "27/03/2023",
+      "line_items": [
+        {
+          "description": "Wireless Mouse",
+          "quantity": 26.0,
+          "unit_price": 720.72,
+          "amount": 18738.72
+        },
+        {
+          "description": "Ballpoint Pens (Box)",
+          "quantity": 30.0,
+          "unit_price": 236.32,
+          "amount": 7089.6
+        },
+        {
+          "description": "Printer Paper A4 (500 sheets)",
+          "quantity": 40.0,
+          "unit_price": 433.53,
+          "amount": 17341.2
+        },
+        {
+          "description": "Webcam HD",
+          "quantity": 26.0,
+          "unit_price": 2438.92,
+          "amount": 63411.92
+        }
+      ],
+      "subtotal": 106581.44,
+      "tax_amount": 5329.07,
+      "total": 111910.51
+    }
+  },
+  {
+    "file": "inv_021.jpg",
+    "kind": "degraded_jpg",
+    "invoice": {
+      "vendor_name": "Maruthi Computers",
+      "gstin": "19TTXWD2419A5ZO",
+      "invoice_number": "INV-BM-1021",
+      "invoice_date": "24-Feb-2025",
+      "line_items": [
+        {
+          "description": "USB-C Cable",
+          "quantity": 15.0,
+          "unit_price": 432.07,
+          "amount": 6481.05
+        },
+        {
+          "description": "Desk Lamp",
+          "quantity": 3.0,
+          "unit_price": 1782.2,
+          "amount": 5346.6
+        },
+        {
+          "description": "Wireless Mouse",
+          "quantity": 16.0,
+          "unit_price": 379.58,
+          "amount": 6073.28
+        },
+        {
+          "description": "Headphones",
+          "quantity": 2.0,
+          "unit_price": 2750.41,
+          "amount": 5500.82
+        },
+        {
+          "description": "Office Chair",
+          "quantity": 16.0,
+          "unit_price": 4194.22,
+          "amount": 67107.52
+        },
+        {
+          "description": "Whiteboard Markers (Set)",
+          "quantity": 8.0,
+          "unit_price": 277.91,
+          "amount": 2223.28
+        },
+        {
+          "description": "Printer Paper A4 (500 sheets)",
+          "quantity": 14.0,
+          "unit_price": 416.26,
+          "amount": 5827.64
+        }
+      ],
+      "subtotal": 98560.19,
+      "tax_amount": 17740.84,
+      "total": 116301.03
+    }
+  },
+  {
+    "file": "inv_022.jpg",
+    "kind": "degraded_jpg",
+    "invoice": {
+      "vendor_name": "Nandi Tech Pvt Ltd",
+      "gstin": "32VLCQU5067D7ZN",
+      "invoice_number": "INV-MC-1022",
+      "invoice_date": "22/12/2023",
+      "line_items": [
+        {
+          "description": "Laptop Stand",
+          "quantity": 20.0,
+          "unit_price": 2215.56,
+          "amount": 44311.2
+        },
+        {
+          "description": "Headphones",
+          "quantity": 39.0,
+          "unit_price": 3358.24,
+          "amount": 130971.36
+        }
+      ],
+      "subtotal": 175282.56,
+      "tax_amount": 8764.13,
+      "total": 184046.69
+    }
+  },
+  {
+    "file": "inv_023.jpg",
+    "kind": "degraded_jpg",
+    "invoice": {
+      "vendor_name": "Southern Star Supplies",
+      "gstin": "33STVMK0752P4ZM",
+      "invoice_number": "INV-LO-1023",
+      "invoice_date": "07/09/2023",
+      "line_items": [
+        {
+          "description": "Cloud Hosting (Monthly)",
+          "quantity": 38.0,
+          "unit_price": 4683.96,
+          "amount": 177990.48
+        },
+        {
+          "description": "Desk Lamp",
+          "quantity": 16.0,
+          "unit_price": 1912.24,
+          "amount": 30595.84
+        },
+        {
+          "description": "Ballpoint Pens (Box)",
+          "quantity": 6.0,
+          "unit_price": 127.42,
+          "amount": 764.52
+        }
+      ],
+      "subtotal": 209350.84,
+      "tax_amount": 37683.15,
+      "total": 247033.99
+    }
+  },
+  {
+    "file": "inv_024.jpg",
+    "kind": "degraded_jpg",
+    "invoice": {
+      "vendor_name": "Blue Orchid Services LLP",
+      "gstin": "37LPRQL6855W8ZH",
+      "invoice_number": "INV-LO-1024",
+      "invoice_date": "10/11/2023",
+      "line_items": [
+        {
+          "description": "Wireless Mouse",
+          "quantity": 27.0,
+          "unit_price": 567.58,
+          "amount": 15324.66
+        },
+        {
+          "description": "Office Chair",
+          "quantity": 16.0,
+          "unit_price": 7298.35,
+          "amount": 116773.6
+        },
+        {
+          "description": "Laptop Stand",
+          "quantity": 32.0,
+          "unit_price": 1451.53,
+          "amount": 46448.96
+        },
+        {
+          "description": "Mechanical Keyboard",
+          "quantity": 2.0,
+          "unit_price": 1918.74,
+          "amount": 3837.48
+        },
+        {
+          "description": "Whiteboard Markers (Set)",
+          "quantity": 15.0,
+          "unit_price": 233.23,
+          "amount": 3498.45
+        }
+      ],
+      "subtotal": 185883.15,
+      "tax_amount": 33458.97,
+      "total": 219342.12
+    }
+  },
+  {
+    "file": "inv_025.jpg",
+    "kind": "degraded_jpg",
+    "invoice": {
+      "vendor_name": "Sri Venkateswara Traders",
+      "gstin": "36JWEUY7109J8ZU",
+      "invoice_number": "INV-BM-1025",
+      "invoice_date": "24/09/2025",
+      "line_items": [
+        {
+          "description": "Printer Paper A4 (500 sheets)",
+          "quantity": 38.0,
+          "unit_price": 544.15,
+          "amount": 20677.7
+        },
+        {
+          "description": "Laptop Stand",
+          "quantity": 34.0,
+          "unit_price": 1733.9,
+          "amount": 58952.6
+        },
+        {
+          "description": "External Hard Drive 1TB",
+          "quantity": 7.0,
+          "unit_price": 5947.67,
+          "amount": 41633.69
+        },
+        {
+          "description": "Headphones",
+          "quantity": 19.0,
+          "unit_price": 1450.69,
+          "amount": 27563.11
+        },
+        {
+          "description": "Desk Lamp",
+          "quantity": 12.0,
+          "unit_price": 1013.85,
+          "amount": 12166.2
+        },
+        {
+          "description": "Notebook (Pack of 5)",
+          "quantity": 35.0,
+          "unit_price": 187.97,
+          "amount": 6578.95
+        }
+      ],
+      "subtotal": 167572.25,
+      "tax_amount": 8378.61,
+      "total": 175950.86
+    }
+  },
+  {
+    "file": "inv_026.jpg",
+    "kind": "degraded_jpg",
+    "invoice": {
+      "vendor_name": "Lakshmi Office Supplies",
+      "gstin": "37JCHDR6999H9ZO",
+      "invoice_number": "INV-BM-1026",
+      "invoice_date": "05/06/2023",
+      "line_items": [
+        {
+          "description": "USB-C Cable",
+          "quantity": 26.0,
+          "unit_price": 356.04,
+          "amount": 9257.04
+        }
+      ],
+      "subtotal": 9257.04,
+      "tax_amount": 462.85,
+      "total": 9719.89
+    }
+  },
+  {
+    "file": "inv_027.jpg",
+    "kind": "degraded_jpg",
+    "invoice": {
+      "vendor_name": "Sri Venkateswara Traders",
+      "gstin": "24JWJWO1349V4ZR",
+      "invoice_number": "INV-SV-1027",
+      "invoice_date": "26-Oct-2023",
+      "line_items": [
+        {
+          "description": "Mechanical Keyboard",
+          "quantity": 14.0,
+          "unit_price": 2690.91,
+          "amount": 37672.74
+        },
+        {
+          "description": "Monitor 24 inch",
+          "quantity": 6.0,
+          "unit_price": 8099.4,
+          "amount": 48596.4
+        },
+        {
+          "description": "Headphones",
+          "quantity": 12.0,
+          "unit_price": 2521.57,
+          "amount": 30258.84
+        },
+        {
+          "description": "Cloud Hosting (Monthly)",
+          "quantity": 11.0,
+          "unit_price": 2026.76,
+          "amount": 22294.36
+        },
+        {
+          "description": "Laptop Stand",
+          "quantity": 29.0,
+          "unit_price": 1909.81,
+          "amount": 55384.49
+        }
+      ],
+      "subtotal": 194206.83,
+      "tax_amount": 34957.23,
+      "total": 229164.06
+    }
+  },
+  {
+    "file": "inv_028.jpg",
+    "kind": "degraded_jpg",
+    "invoice": {
+      "vendor_name": "Kaveri Electronics",
+      "gstin": "33WJWMI8877C1ZR",
+      "invoice_number": "INV-MC-1028",
+      "invoice_date": "25/03/2024",
+      "line_items": [
+        {
+          "description": "Mechanical Keyboard",
+          "quantity": 11.0,
+          "unit_price": 5066.83,
+          "amount": 55735.13
+        }
+      ],
+      "subtotal": 55735.13,
+      "tax_amount": 10032.32,
+      "total": 65767.45
+    }
+  },
+  {
+    "file": "inv_029.png",
+    "kind": "cut_off_png",
+    "invoice": {
+      "vendor_name": "Kaveri Electronics",
+      "gstin": "33LNKKV1256W8ZI",
+      "invoice_number": "INV-MC-1029",
+      "invoice_date": "19/09/2025",
+      "line_items": [
+        {
+          "description": "Wireless Mouse",
+          "quantity": 3.0,
+          "unit_price": 746.02,
+          "amount": 2238.06
+        },
+        {
+          "description": "Power Strip",
+          "quantity": 12.0,
+          "unit_price": 555.83,
+          "amount": 6669.96
+        },
+        {
+          "description": "Webcam HD",
+          "quantity": 29.0,
+          "unit_price": 3281.79,
+          "amount": 95171.91
+        },
+        {
+          "description": "Notebook (Pack of 5)",
+          "quantity": 12.0,
+          "unit_price": 449.08,
+          "amount": 5388.96
+        },
+        {
+          "description": "Monitor 24 inch",
+          "quantity": 28.0,
+          "unit_price": 11443.49,
+          "amount": 320417.72
+        }
+      ],
+      "subtotal": null,
+      "tax_amount": null,
+      "total": null
+    }
+  },
+  {
+    "file": "inv_030.png",
+    "kind": "cut_off_png",
+    "invoice": {
+      "vendor_name": "Nandi Tech Pvt Ltd",
+      "gstin": "29TYPUO0348E5ZS",
+      "invoice_number": "INV-MC-1030",
+      "invoice_date": "12/07/2023",
+      "line_items": [
+        {
+          "description": "USB-C Cable",
+          "quantity": 8.0,
+          "unit_price": 585.69,
+          "amount": 4685.52
+        },
+        {
+          "description": "Printer Paper A4 (500 sheets)",
+          "quantity": 26.0,
+          "unit_price": 516.23,
+          "amount": 13421.98
+        },
+        {
+          "description": "Notebook (Pack of 5)",
+          "quantity": 1.0,
+          "unit_price": 347.3,
+          "amount": 347.3
+        },
+        {
+          "description": "External Hard Drive 1TB",
+          "quantity": 35.0,
+          "unit_price": 4724.52,
+          "amount": 165358.2
+        }
+      ],
+      "subtotal": null,
+      "tax_amount": null,
+      "total": null
+    }
+  },
+  {
+    "file": "inv_031.png",
+    "kind": "cut_off_png",
+    "invoice": {
+      "vendor_name": "Annapurna Distributors",
+      "gstin": "09HDODU2748W5ZQ",
+      "invoice_number": "INV-BM-1031",
+      "invoice_date": "19/07/2024",
+      "line_items": [
+        {
+          "description": "Desk Lamp",
+          "quantity": 11.0,
+          "unit_price": 1028.28,
+          "amount": 11311.08
+        }
+      ],
+      "subtotal": null,
+      "tax_amount": null,
+      "total": null
+    }
+  },
+  {
+    "file": "inv_032.png",
+    "kind": "cut_off_png",
+    "invoice": {
+      "vendor_name": "Sri Venkateswara Traders",
+      "gstin": "27XJSSV7278P6ZL",
+      "invoice_number": "INV-TE-1032",
+      "invoice_date": "20-Apr-2025",
+      "line_items": [
+        {
+          "description": "Notebook (Pack of 5)",
+          "quantity": 33.0,
+          "unit_price": 373.89,
+          "amount": 12338.37
+        },
+        {
+          "description": "Ballpoint Pens (Box)",
+          "quantity": 9.0,
+          "unit_price": 226.88,
+          "amount": 2041.92
+        },
+        {
+          "description": "Laptop Stand",
+          "quantity": 18.0,
+          "unit_price": 2068.08,
+          "amount": 37225.44
+        },
+        {
+          "description": "Monitor 24 inch",
+          "quantity": 27.0,
+          "unit_price": 9379.13,
+          "amount": 253236.51
+        }
+      ],
+      "subtotal": null,
+      "tax_amount": null,
+      "total": null
+    }
+  },
+  {
+    "file": "inv_033.png",
+    "kind": "cut_off_png",
+    "invoice": {
+      "vendor_name": "Blue Orchid Services LLP",
+      "gstin": "19PBEQS5171Q8Z0",
+      "invoice_number": "INV-MC-1033",
+      "invoice_date": "2024-01-31",
+      "line_items": [
+        {
+          "description": "Webcam HD",
+          "quantity": 16.0,
+          "unit_price": 2386.67,
+          "amount": 38186.72
+        },
+        {
+          "description": "Whiteboard Markers (Set)",
+          "quantity": 15.0,
+          "unit_price": 359.68,
+          "amount": 5395.2
+        },
+        {
+          "description": "Laptop Stand",
+          "quantity": 27.0,
+          "unit_price": 682.93,
+          "amount": 18439.11
+        },
+        {
+          "description": "Headphones",
+          "quantity": 31.0,
+          "unit_price": 3027.25,
+          "amount": 93844.75
+        }
+      ],
+      "subtotal": null,
+      "tax_amount": null,
+      "total": null
+    }
+  },
+  {
+    "file": "inv_034.png",
+    "kind": "cut_off_png",
+    "invoice": {
+      "vendor_name": "Green Leaf Traders",
+      "gstin": "09NDYUW1724A1ZK",
+      "invoice_number": "INV-SV-1034",
+      "invoice_date": "21/08/2023",
+      "line_items": [
+        {
+          "description": "Notebook (Pack of 5)",
+          "quantity": 26.0,
+          "unit_price": 344.95,
+          "amount": 8968.7
+        },
+        {
+          "description": "Mechanical Keyboard",
+          "quantity": 22.0,
+          "unit_price": 5335.54,
+          "amount": 117381.88
+        },
+        {
+          "description": "Desk Lamp",
+          "quantity": 35.0,
+          "unit_price": 1146.02,
+          "amount": 40110.7
+        },
+        {
+          "description": "Power Strip",
+          "quantity": 21.0,
+          "unit_price": 657.42,
+          "amount": 13805.82
+        },
+        {
+          "description": "Cloud Hosting (Monthly)",
+          "quantity": 32.0,
+          "unit_price": 10723.83,
+          "amount": 343162.56
+        },
+        {
+          "description": "Printer Paper A4 (500 sheets)",
+          "quantity": 3.0,
+          "unit_price": 454.36,
+          "amount": 1363.08
+        },
+        {
+          "description": "Monitor 24 inch",
+          "quantity": 16.0,
+          "unit_price": 11418.13,
+          "amount": 182690.08
+        }
+      ],
+      "subtotal": null,
+      "tax_amount": null,
+      "total": null
+    }
+  },
+  {
+    "file": "inv_035.png",
+    "kind": "cut_off_png",
+    "invoice": {
+      "vendor_name": "Blue Orchid Services LLP",
+      "gstin": "24PSEHO4740Z8ZI",
+      "invoice_number": "INV-MC-1035",
+      "invoice_date": "26-Sep-2024",
+      "line_items": [
+        {
+          "description": "Whiteboard Markers (Set)",
+          "quantity": 34.0,
+          "unit_price": 235.37,
+          "amount": 8002.58
+        },
+        {
+          "description": "USB-C Cable",
+          "quantity": 12.0,
+          "unit_price": 201.59,
+          "amount": 2419.08
+        },
+        {
+          "description": "Laptop Stand",
+          "quantity": 6.0,
+          "unit_price": 1758.03,
+          "amount": 10548.18
+        }
+      ],
+      "subtotal": null,
+      "tax_amount": null,
+      "total": null
+    }
+  },
+  {
+    "file": "inv_036.png",
+    "kind": "cut_off_png",
+    "invoice": {
+      "vendor_name": "Annapurna Distributors",
+      "gstin": "27OJGMP1369L5ZI",
+      "invoice_number": "INV-SV-1036",
+      "invoice_date": "16-Oct-2024",
+      "line_items": [
+        {
+          "description": "External Hard Drive 1TB",
+          "quantity": 23.0,
+          "unit_price": 6459.25,
+          "amount": 148562.75
+        }
+      ],
+      "subtotal": null,
+      "tax_amount": null,
+      "total": null
+    }
+  }
+]
