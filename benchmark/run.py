@@ -1,11 +1,13 @@
 """Send the benchmark invoices through the real AI and save its answers.
 
 Usage (from the project folder):
-    python -m benchmark.run                  all invoices
-    python -m benchmark.run --per-kind 2     only 2 invoices of each kind (a cheap test)
+    python -m benchmark.run                          all invoices
+    python -m benchmark.run --per-kind 2             only 2 invoices of each kind (a cheap test)
+    python -m benchmark.run --kind phone_photo --redo   ask the AI again for one kind of invoice
 
 Answers are saved in benchmark/results/predictions.json. Invoices that already
-have an answer are skipped, so it is safe to run again after a failure.
+have an answer are skipped (unless you use --redo), so it is safe to run again
+after a failure.
 """
 import argparse
 import json
@@ -34,8 +36,10 @@ def save_json(path, data):
         json.dump(data, f, indent=2)
 
 
-def choose(labels, per_kind):
-    """Keep only the first few invoices of each kind (or all of them)."""
+def choose(labels, per_kind, kind):
+    """Keep only some invoices: one kind, and/or the first few of each kind."""
+    if kind is not None:
+        labels = [label for label in labels if label["kind"] == kind]
     if per_kind is None:
         return labels
     seen = {}
@@ -50,18 +54,25 @@ def choose(labels, per_kind):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--per-kind", type=int, default=None, help="only this many invoices of each kind")
+    parser.add_argument("--kind", default=None, help="only invoices of this kind, for example phone_photo")
     parser.add_argument("--delay", type=float, default=4.0, help="seconds to wait between AI calls")
+    parser.add_argument("--redo", action="store_true", help="ask the AI again even if an answer is saved")
     parser.add_argument("--redo-errors", action="store_true", help="try again the invoices that failed before")
     args = parser.parse_args()
 
     os.makedirs(RESULTS_DIR, exist_ok=True)
-    labels = choose(load_json(LABELS_PATH, []), args.per_kind)
+    labels = choose(load_json(LABELS_PATH, []), args.per_kind, args.kind)
     predictions = load_json(PREDICTIONS_PATH, {})
 
     for number, label in enumerate(labels, start=1):
         name = label["file"]
         previous = predictions.get(name)
-        if previous is not None and not (args.redo_errors and "error" in previous):
+        already_done = (
+            previous is not None
+            and not args.redo
+            and not (args.redo_errors and "error" in previous)
+        )
+        if already_done:
             print(f"[{number}/{len(labels)}] {name}: already done, skipping")
             continue
 

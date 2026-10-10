@@ -15,3 +15,9 @@
 - Health checks: /health only says the program is alive, /health/ready checks the database and Redis.
 - Tests use a fake AI and temporary databases, so they need no key and no internet (about 60 tests).
 - invoiceiq-app image size: 373MB
+
+## Experiment log
+
+- Baseline (66 invoices): 526/528 field checks correct (99.6%). Only misses: 2 GSTINs on phone photos (0 read for a letter), both flagged for review. 0 silent errors.
+- Experiment: added the GSTIN pattern to the prompt. Result on 12 phone photos: 12/12 GSTINs correct (96/96 fields, 100%). Silent errors: 0. Decision: Kept, because in-context structural constraints prompted the vision model to disambiguate blurred letterforms directly from raw visual evidence without inventing unseen values or bypassing review flags.
+- Why automatic character repair was rejected: 0 could be O, D, or Q, so deterministic post-processing repair risks synthesizing a plausible but false identifier that passes structural validation and masks extraction failures.
