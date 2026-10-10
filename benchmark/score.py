@@ -13,7 +13,15 @@ LABELS_PATH = os.path.join("benchmark", "labels.json")
 PREDICTIONS_PATH = os.path.join("benchmark", "results", "predictions.json")
 REPORT_PATH = os.path.join("benchmark", "results", "report.md")
 
-KINDS = ["clean_pdf", "clean_png", "degraded_jpg", "cut_off_png"]
+KINDS = [
+    "clean_pdf",
+    "clean_png",
+    "degraded_jpg",
+    "cut_off_png",
+    "phone_photo",
+    "smudged",
+    "layout_b",
+]
 
 
 def load_json(path):
@@ -133,7 +141,7 @@ def collect():
         summary["invented"][0] += invented
         summary["invented"][1] += chances
 
-        group = summary["cut_off"] if kind == "cut_off_png" else summary["others"]
+        group = summary["cut_off"] if kind in ("cut_off_png", "smudged") else summary["others"]
         group[0] += int(prediction["needs_review"])
         group[1] += 1
 
