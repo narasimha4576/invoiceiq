@@ -22,6 +22,8 @@ KINDS = [
     "smudged",
     "layout_b",
 ]
+# Invoices where part of the page is missing: the right answer for some fields is "nothing"
+INCOMPLETE_KINDS = ("cut_off_png", "smudged")
 
 
 def load_json(path):
@@ -111,10 +113,12 @@ def collect():
     summary = {
         "stats": {kind: {field: [0, 0] for field in fields} for kind in KINDS},
         "cells": {kind: [0, 0] for kind in KINDS},
-        "cut_off": [0, 0],  # [flagged for review, total]
-        "others": [0, 0],  # [flagged for review (false alarms), total]
+        "incomplete": [0, 0],  # [flagged for review, total]
+        "complete_wrong": [0, 0],  # [flagged for review (good catches), total]
+        "complete_ok": [0, 0],  # [flagged for review (false alarms), total]
         "invented": [0, 0],  # [invented values, chances to invent]
-        "silent": [],
+        "errors": [],  # every invoice with a wrong field
+        "silent": [],  # wrong, and not flagged for review
         "failed": [],
         "scored": 0,
         "planned": len(predictions),
@@ -141,17 +145,26 @@ def collect():
         summary["invented"][0] += invented
         summary["invented"][1] += chances
 
-        group = summary["cut_off"] if kind in ("cut_off_png", "smudged") else summary["others"]
-        group[0] += int(prediction["needs_review"])
+        flagged = prediction["needs_review"]
+        if kind in INCOMPLETE_KINDS:
+            group = summary["incomplete"]
+        elif wrong:
+            group = summary["complete_wrong"]
+        else:
+            group = summary["complete_ok"]
+        group[0] += int(flagged)
         group[1] += 1
 
-        if wrong and not prediction["needs_review"]:
-            summary["silent"].append((name, wrong))
+        if wrong:
+            summary["errors"].append((name, kind, flagged, wrong))
+            if not flagged:
+                summary["silent"].append(name)
     return summary
 
 
 def percent(correct, total):
-    return "-" if total == 0 else f"{100 * correct / total:.0f}%"
+    """A percentage with one decimal, so 526/528 shows as 99.6% and not 100%."""
+    return "-" if total == 0 else f"{100 * correct / total:.1f}%"
 
 
 def table(headers, rows, markdown):
@@ -179,7 +192,9 @@ def build_report(summary, markdown):
 
     all_correct = sum(c for kind in KINDS for c, t in summary["stats"][kind].values())
     all_total = sum(t for kind in KINDS for c, t in summary["stats"][kind].values())
-    lines.append(f"Overall: {all_correct}/{all_total} field checks correct ({percent(all_correct, all_total)})")
+    lines.append(
+        f"Overall: {all_correct}/{all_total} field checks correct ({percent(all_correct, all_total)})"
+    )
 
     lines.append(heading("Field accuracy (correct / total)"))
     headers = ["field"] + KINDS + ["all"]
@@ -207,20 +222,27 @@ def build_report(summary, markdown):
     lines.append(table(headers, rows, markdown))
 
     lines.append(heading("Review flag"))
-    flagged, total = summary["cut_off"]
-    lines.append(f"Cut-off invoices flagged for review: {flagged}/{total}")
-    flagged, total = summary["others"]
-    lines.append(f"Other invoices flagged for review (false alarms): {flagged}/{total}")
+    flagged, total = summary["incomplete"]
+    lines.append(f"Incomplete invoices (cut-off or smudged) flagged for review: {flagged}/{total}")
+    flagged, total = summary["complete_wrong"]
+    lines.append(f"Complete invoices with a wrong field, flagged for review (good catches): {flagged}/{total}")
+    flagged, total = summary["complete_ok"]
+    lines.append(f"Complete invoices with every field right, flagged anyway (false alarms): {flagged}/{total}")
     invented, chances = summary["invented"]
     lines.append(f"Invented values (a value given where the page shows nothing): {invented}/{chances}")
-    silent = summary["silent"]
-    lines.append(f"Wrong but NOT flagged for review (silent errors): {len(silent)} invoices")
+    lines.append(f"Wrong but NOT flagged for review (silent errors): {len(summary['silent'])} invoices")
 
-    if silent:
-        lines.append(heading("Silent errors (first 10)"))
-        for name, wrong in silent[:10]:
+    errors = summary["errors"]
+    if errors:
+        lines.append(heading("All wrong fields (first 30)"))
+        count = 0
+        for name, kind, flagged, wrong in errors:
             for field, expected, got in wrong:
-                lines.append(f"- {name}: {field} expected {expected!r}, got {got!r}")
+                if count >= 30:
+                    break
+                status = "flagged" if flagged else "NOT flagged"
+                lines.append(f"- {name} ({kind}, {status}): {field} expected {expected!r}, got {got!r}")
+                count += 1
 
     if failed:
         lines.append(heading("Failed AI calls"))
@@ -229,7 +251,7 @@ def build_report(summary, markdown):
 
     lines.append(heading("Note"))
     lines.append(
-        "These invoices are generated: they share one layout, and the PDFs are pictures of invoices. "
+        "These invoices are generated, and the PDFs are pictures of invoices. "
         "Real invoices are messier, so real-world accuracy is likely lower."
     )
     return "\n".join(lines)

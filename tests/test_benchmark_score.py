@@ -1,4 +1,4 @@
-from benchmark.score import same_number, same_text, score_invoice
+from benchmark.score import percent, same_number, same_text, score_invoice
 
 
 def make_invoice(**changes):
@@ -63,3 +63,8 @@ def test_extra_line_item_counts_as_wrong():
     results, cells, wrong, invented, chances = score_invoice(make_invoice(), got)
     assert results["line_items"] is False
     assert cells == (4, 8)
+
+def test_percent_does_not_round_up_to_100():
+    assert percent(526, 528) == "99.6%"
+    assert percent(528, 528) == "100.0%"
+    assert percent(0, 0) == "-"
