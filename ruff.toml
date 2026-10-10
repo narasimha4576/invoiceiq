@@ -1,0 +1,4 @@
+# Which problems the code checker looks for.
+# E4, E7, E9: syntax and basic mistakes. F: unused imports, undefined names, and similar real bugs.
+[lint]
+select = ["E4", "E7", "E9", "F"]

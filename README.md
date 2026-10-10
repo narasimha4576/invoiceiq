@@ -1,4 +1,5 @@
 # InvoiceIQ
+![CI](https://github.com/narasimha4576/invoiceiq/actions/workflows/ci.yml/badge.svg)
 
 AI-powered invoice extraction with a human-review safety net. Upload an invoice (PDF, PNG or JPG) and get structured JSON back, with a confidence score for every field and a clear flag when a person should double-check it. Invoices are processed in the background by a worker, so uploads never make the user wait.
 

@@ -15,7 +15,14 @@ import random
 import numpy
 from PIL import Image, ImageDraw, ImageFilter
 
-from benchmark.generate import BUYERS, LABELS_PATH, OUT_DIR, load_font, make_invoice, render
+from benchmark.generate import (
+    BUYERS,
+    LABELS_PATH,
+    OUT_DIR,
+    load_font,
+    make_invoice,
+    render,
+)
 
 SEED = 7
 

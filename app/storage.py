@@ -1,6 +1,6 @@
 import os
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from sqlalchemy import JSON, Boolean, DateTime, String, Text, create_engine, select
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column
@@ -56,7 +56,7 @@ def save_invoice(file_name: str, original: dict, corrected: dict, needs_review: 
             original=original,
             corrected=corrected,
             needs_review=needs_review,
-            saved_at=datetime.now(timezone.utc),
+            saved_at=datetime.now(UTC),
         )
         session.add(record)
         session.commit()
@@ -87,7 +87,7 @@ def create_job(file_name: str) -> str:
                 id=job_id,
                 file_name=file_name,
                 status="queued",
-                created_at=datetime.now(timezone.utc),
+                created_at=datetime.now(UTC),
             )
         )
         session.commit()
@@ -105,7 +105,7 @@ def update_job(job_id: str, status: str, result: dict | None = None, error: str 
         if error is not None:
             job.error = error
         if status in ("done", "failed"):
-            job.finished_at = datetime.now(timezone.utc)
+            job.finished_at = datetime.now(UTC)
         session.commit()
 
 

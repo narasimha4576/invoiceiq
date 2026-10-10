@@ -2,3 +2,5 @@ pytest
 httpx
 httpx2
 pillow
+numpy
+ruff
