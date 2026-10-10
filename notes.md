@@ -18,6 +18,7 @@
 
 ## Experiment log
 
-- Baseline (66 invoices): 526/528 field checks correct (99.6%). Only misses: 2 GSTINs on phone photos (0 read for a letter), both flagged for review. 0 silent errors.
-- Experiment: added the GSTIN pattern to the prompt. Result on 12 phone photos: 12/12 GSTINs correct (96/96 fields, 100%). Silent errors: 0. Decision: Kept, because in-context structural constraints prompted the vision model to disambiguate blurred letterforms directly from raw visual evidence without inventing unseen values or bypassing review flags.
-- Why automatic character repair was rejected: 0 could be O, D, or Q, so deterministic post-processing repair risks synthesizing a plausible but false identifier that passes structural validation and masks extraction failures.
+- Baseline (66 generated invoices, 7 conditions): 526/528 field checks correct (99.6%). Only misses: 2 GSTINs on phone photos (a digit 0 read where a letter belongs). Both were flagged for review by the GSTIN format check. 0 silent errors.
+- Experiment: added the GSTIN pattern to the prompt. Re-ran the 12 phone photos. Accuracy stayed 526/528, but one misread became a valid-looking wrong code (D read as O) that no check could catch: silent errors went from 0 to 1.
+- Decision: reverted. Accuracy alone would have hidden the problem. In a human-review system, an error that gets flagged is better than one that looks valid.
+- Also rejected: automatic character repair (0 to O). A 0 in a letter position could be O, D or Q, so a repair can create a wrong but valid-looking code.
