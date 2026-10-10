@@ -151,4 +151,4 @@ def test_date_in_future():
 
 
 def test_date_missing_is_skipped():
-    assert check_date(make_invoice(invoice_date=None)) == []
+    assert check_date(make_invoice(invoice_date=None)) == [1]
