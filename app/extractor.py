@@ -1,6 +1,7 @@
 import os
 import time
 
+import httpx
 from dotenv import load_dotenv
 from google import genai
 from google.genai import errors, types
@@ -53,7 +54,7 @@ def _call_model(contents, config=None, tries: int = 3):
             return _get_client().models.generate_content(
                 model=MODEL_NAME, contents=contents, config=config
             )
-        except errors.ServerError:
+        except (errors.ServerError, httpx.TransportError):
             if attempt == tries - 1:
                 raise
             time.sleep(5 * (attempt + 1))
