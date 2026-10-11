@@ -62,11 +62,52 @@ The AI can misread an invoice or invent values for parts it cannot see. So every
 
 Rules and confidence catch different mistakes. A rule catches a half-visible date like `2023-1`, while low confidence catches a cut-off invoice number that looks valid.
 
+## Measured accuracy
+I measured the system on **66 generated invoices** in 7 conditions. Each invoice is drawn from known data, so the correct answer for every field is known exactly.
+
+**Result: 526 of 528 field checks correct (99.6%).**
+
+| Condition | Invoices | What makes it hard | Field checks correct |
+|---|---|---|---|
+| Clean PDF | 12 | baseline | 96/96 |
+| Clean PNG | 8 | baseline | 64/64 |
+| Degraded JPG | 8 | tilted, blurred, low resolution, compressed | 64/64 |
+| Cut-off page | 8 | totals missing, so the right answer is "nothing" | 64/64 |
+| Phone photo | 12 | dark table, tilt, keystone effect, shadow, noise, blur | 94/96 |
+| Smudged page | 8 | amounts and totals covered, so the right answer is "nothing" | 64/64 |
+| Second layout | 10 | different layout, HSN column, Indian digit grouping (`1,23,456.00`) | 80/80 |
+
+The review safety net matters as much as accuracy:
+
+| Question | Result |
+|---|---|
+| Incomplete invoices (cut-off or smudged) flagged for review | 16/16 |
+| Invoices with a wrong field flagged for review | 2/2 |
+| Correct invoices flagged by mistake | 0/48 |
+| Values invented where the page shows nothing | 0/48 |
+| Wrong answers that were **not** flagged (silent errors) | 0 |
+
+**The two misses** were GSTINs on phone photos where the model read a digit `0` for a letter (`D` or `O`). The GSTIN format check caught both and sent them to human review.
+
+**An experiment I rejected.** I added the GSTIN pattern to the prompt. Accuracy did not change, but one misread became a valid-looking wrong code (`D` read as `O`) that no check could catch. Silent errors went from 0 to 1, so I reverted it. Accuracy alone would have hidden that.
+
+**How it was measured:** a generator creates the invoices and their answer sheets, a runner sends them through the same code the API uses, and a scorer compares each field. Text matches ignoring capitals and extra spaces, numbers match within 0.01, and line items are scored cell by cell. The full report is in [`benchmark/results/report.md`](benchmark/results/report.md).
+
+**Limits:** the invoices are generated, with two layouts, and the PDFs are pictures of invoices. Real invoices (handwriting, stamps, multiple pages, other languages) are not measured yet, so real-world accuracy is likely lower. The numbers are for one model, set in `app/config.py`, measured in October 2026.
+
+To reproduce:
+```bash
+python benchmark/generate.py
+python -m benchmark.generate_hard
+python -m benchmark.run        # about 66 AI calls
+python -m benchmark.score
+```
+
 ## Reliability
 - **Retries:** a busy or rate-limited AI service is retried up to 3 times with growing waits. Permanent errors (such as a wrong API key) fail immediately.
 - **No lost jobs:** tasks wait in Redis, so a job uploaded while the worker is down is processed when it returns.
 - **Health checks:** `/health/ready` checks the database and Redis, and Docker uses it to mark the API healthy or unhealthy.
-- **Tests:** about 60 automated tests run with a fake AI, so they need no API key and no internet.
+- **Tests:** 138 automated tests run with a fake AI, so they need no API key and no internet. They run automatically on every push with GitHub Actions.
 - **Smoke test:** `smoke_test.py` checks a running system from end to end.
 
 ![Running containers](docs/compose-ps.png)
@@ -133,13 +174,13 @@ app/        API, AI extraction, validators, review logic, jobs, worker, storage
 ui/         Streamlit review screen
 tests/      Unit and API tests
 samples/    Fake invoices for testing
+benchmark/  Generated test invoices, answer sheets, runner and scorer
 docs/       Screenshots
 ```
 
 ## Status and roadmap
-Accuracy has not been measured on a labelled set yet. Next:
-- Accuracy benchmark on labelled invoices
-- GitHub Actions: automatic tests and image builds
-- Public deployment
+Measured, tested and published (see above). Next:
+- Public deployment with a live demo link
+- Real-world invoice samples in the benchmark
 
 All sample invoices are fake.
