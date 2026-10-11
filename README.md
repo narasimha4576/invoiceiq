@@ -94,7 +94,12 @@ The API is at http://localhost:8000/docs. Start the review screen in a second te
 pip install -r requirements-ui.txt
 streamlit run ui/review_app.py
 ```
-
+## Published image
+Every push to `main` that passes the tests is built and published by GitHub Actions to GitHub Container Registry:
+```bash
+docker pull ghcr.io/narasimha4576/invoiceiq:latest
+```
+Tags: `latest` (newest main), `sha-<commit>` (a specific commit) and `v<version>` (releases).
 ## Run without Docker
 ```bash
 python -m venv .venv
