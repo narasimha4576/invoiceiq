@@ -3,6 +3,8 @@
 
 **Live demo:** https://invoiceiq-b4hw9ocq9posxgujujmrga.streamlit.app/ (sample gallery and a playground for the safety net; no AI key is involved).
 
+**Demo video (138 seconds):** <video controls src="../../Videos/Screen Recordings/demo-small.mp4" title="Title"></video>
+
 AI-powered invoice extraction with a human-review safety net. Upload an invoice (PDF, PNG or JPG) and get structured JSON back, with a confidence score for every field and a clear flag when a person should double-check it. Invoices are processed in the background by a worker, so uploads never make the user wait.
 
 ![Review screen](docs/review-screen.png)
@@ -127,6 +129,7 @@ python -m benchmark.score
 | `GET /invoices` | List saved invoices |
 
 ## Run with Docker (recommended)
+You need your own free Google AI key (from Google AI Studio). It stays on your computer in the `.env` file and is never uploaded anywhere.
 ```bash
 cp .env.example .env
 # edit .env: add your Gemini API key and choose a database password
@@ -143,6 +146,7 @@ Every push to `main` that passes the tests is built and published by GitHub Acti
 docker pull ghcr.io/narasimha4576/invoiceiq:latest
 ```
 Tags: `latest` (newest main), `sha-<commit>` (a specific commit) and `v<version>` (releases).
+
 ## Run without Docker
 ```bash
 python -m venv .venv
