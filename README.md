@@ -111,10 +111,23 @@ python -m benchmark.score
 - **Retries:** a busy or rate-limited AI service is retried up to 3 times with growing waits. Permanent errors (such as a wrong API key) fail immediately.
 - **No lost jobs:** tasks wait in Redis, so a job uploaded while the worker is down is processed when it returns.
 - **Health checks:** `/health/ready` checks the database and Redis, and Docker uses it to mark the API healthy or unhealthy.
-- **Tests:** 138 automated tests run with a fake AI, so they need no API key and no internet. They run automatically on every push with GitHub Actions.
+- **Tests:** 148 automated tests run with a fake AI, so they need no API key and no internet. They run automatically on every push with GitHub Actions.
 - **Smoke test:** `smoke_test.py` checks a running system from end to end.
 
 ![Running containers](docs/compose-ps.png)
+
+
+## Design decisions
+| Decision | Why | Trade-off |
+|---|---|---|
+| Return `null` instead of guessing | A wrong value that looks right is worse than a missing one | More invoices need a human look |
+| Check the AI with plain code and also use its own confidence | Rules and confidence catch different mistakes (a half-visible date versus a cut-off invoice number) | Two mechanisms to maintain |
+| Measure silent errors, not only accuracy | A prompt change kept accuracy the same but turned a flagged error into one nobody is warned about, so I reverted it | Needed a labelled benchmark |
+| Background jobs with Redis and Celery | Uploads answer instantly, and a job is not lost if the worker is down | More containers to run |
+| Retry only temporary errors | A busy AI service often recovers, but a wrong API key never does | Needs error classification |
+| SQLite in tests, PostgreSQL in Docker | The same code runs on both through SQLAlchemy, so tests run anywhere | Small differences between databases are possible |
+| Public demo without a live AI key | A live endpoint needs an API key on a server, and a keyless demo cannot leak it or be abused | Visitors cannot trigger the AI. The gallery shows saved results and the video shows the live system |
+
 
 ## API
 | Endpoint | Purpose |
@@ -185,8 +198,8 @@ docs/       Screenshots
 ```
 
 ## Status and roadmap
-Measured, tested and published (see above). Next:
-- Public deployment with a live demo link
-- Real-world invoice samples in the benchmark
+Built, tested, benchmarked, published and demoed. Possible next steps:
+- Measure real-world invoices (handwriting, stamps, several pages, other languages)
+- A live hosted API, only with a dedicated free-tier key and the built-in access code and daily limit
 
 All sample invoices are fake.
