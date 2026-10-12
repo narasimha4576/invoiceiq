@@ -3,7 +3,7 @@
 
 **Live demo:** https://invoiceiq-b4hw9ocq9posxgujujmrga.streamlit.app/ (sample gallery and a playground for the safety net; no AI key is involved).
 
-**Demo video (80 seconds):** https://YOUR-VIDEO-LINK
+**Demo video (138 seconds):** https://github.com/user-attachments/assets/94db03d7-0229-4977-81b5-b6da2b7c094c
 
 AI-powered invoice extraction with a human-review safety net. Upload an invoice (PDF, PNG or JPG) and get structured JSON back, with a confidence score for every field and a clear flag when a person should double-check it. Invoices are processed in the background by a worker, so uploads never make the user wait.
 
