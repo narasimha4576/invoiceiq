@@ -4,7 +4,7 @@ import pytest
 from fastapi.testclient import TestClient
 from google.genai import errors
 
-from app import jobs, main, storage, worker
+from app import guards, jobs, main, storage, worker
 from app.schemas import AIExtraction, FieldConfidence, Invoice, LineItem
 
 calls = []  # the file paths our fake AI was asked to read
@@ -254,4 +254,60 @@ def test_ready_returns_503_when_database_is_down(client, monkeypatch):
 def test_ready_checks_redis_when_celery_is_enabled(client, monkeypatch):
     monkeypatch.setattr(main, "JOB_RUNNER", "celery")
     monkeypatch.setattr(main, "check_redis", lambda url: "ok")
-    assert client.get("/health/ready").json()["redis"] == "ok"     
+    assert client.get("/health/ready").json()["redis"] == "ok" 
+
+
+# ---- protection for a public demo ----
+def test_access_code_is_required_when_configured(client, monkeypatch):
+    monkeypatch.setattr(guards, "ACCESS_CODE", "secret")
+    assert upload_job(client).status_code == 401
+    assert client.get("/jobs").status_code == 401
+    assert client.get("/invoices").status_code == 401
+    # The health checks stay open
+    assert client.get("/health").status_code == 200
+    assert client.get("/health/ready").status_code == 200
+
+
+def test_correct_access_code_is_accepted(client, monkeypatch):
+    monkeypatch.setattr(guards, "ACCESS_CODE", "secret")
+    headers = {"X-Access-Code": "secret"}
+    response = client.post(
+        "/jobs",
+        files={"file": ("invoice.pdf", b"fake file bytes", "application/pdf")},
+        headers=headers,
+    )
+    assert response.status_code == 202
+    assert client.get("/jobs", headers=headers).status_code == 200
+    assert client.get("/jobs", headers={"X-Access-Code": "wrong"}).status_code == 401
+
+
+def test_no_access_code_configured_means_open_access(client):
+    assert upload_job(client).status_code == 202
+
+
+def test_oversized_upload_is_refused(client, monkeypatch):
+    monkeypatch.setattr(guards, "MAX_UPLOAD_MB", 0.001)  # about 1 KB
+    response = upload_job(client, content=b"x" * 5000)
+    assert response.status_code == 413
+
+
+def test_daily_limit_stops_extra_requests(client, monkeypatch):
+    monkeypatch.setattr(guards, "DAILY_AI_LIMIT", 2)
+    assert upload_job(client).status_code == 202
+    assert upload_job(client).status_code == 202
+    third = upload_job(client)
+    assert third.status_code == 429
+    assert "daily" in third.json()["detail"]
+
+
+def test_rejected_uploads_do_not_use_up_the_daily_limit(client, monkeypatch):
+    monkeypatch.setattr(guards, "DAILY_AI_LIMIT", 1)
+    wrong_type = upload_job(client, name="notes.txt", content=b"hello", kind="text/plain")
+    assert wrong_type.status_code == 400
+    assert upload_job(client).status_code == 202
+
+
+def test_sync_extract_also_counts_against_the_limit(client, monkeypatch):
+    monkeypatch.setattr(guards, "DAILY_AI_LIMIT", 1)
+    assert upload(client).status_code == 200
+    assert upload(client).status_code == 429

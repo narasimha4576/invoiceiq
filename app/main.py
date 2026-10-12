@@ -1,11 +1,12 @@
 import os
 import tempfile
 
-from fastapi import BackgroundTasks, FastAPI, File, HTTPException, Query, UploadFile
+from fastapi import BackgroundTasks, Depends, FastAPI, File, HTTPException, Query, UploadFile
 from google.genai import errors
 from pydantic import BaseModel
 
 from app.extractor import MIME_TYPES, extract_with_confidence
+from app.guards import check_daily_limit, read_upload, require_access
 from app.health import check_database, check_redis
 from app.jobs import process_job
 from app.review import check_missing_fields, review_invoice
@@ -68,15 +69,17 @@ def ready():
     return {"status": "ok", **checks}
 
 
-@app.post("/extract", response_model=ReviewedInvoice)
+@app.post("/extract", response_model=ReviewedInvoice, dependencies=[Depends(require_access)])
 def extract(file: UploadFile = File(...)):
     extension = os.path.splitext(file.filename or "")[1].lower()
     if extension not in MIME_TYPES:
         raise HTTPException(status_code=400, detail="Please upload a PDF, PNG or JPG file.")
 
-    contents = file.file.read()
+    contents = read_upload(file)
     if not contents:
         raise HTTPException(status_code=400, detail="The uploaded file is empty.")
+
+    check_daily_limit()
 
     # Save the upload to a temporary file so our extractor can read it
     with tempfile.NamedTemporaryFile(delete=False, suffix=extension) as tmp:
@@ -95,15 +98,22 @@ def extract(file: UploadFile = File(...)):
         os.remove(temp_path)
 
 
-@app.post("/jobs", response_model=JobCreated, status_code=202)
+@app.post(
+    "/jobs",
+    response_model=JobCreated,
+    status_code=202,
+    dependencies=[Depends(require_access)],
+)
 def create_extraction_job(background_tasks: BackgroundTasks, file: UploadFile = File(...)):
     extension = os.path.splitext(file.filename or "")[1].lower()
     if extension not in MIME_TYPES:
         raise HTTPException(status_code=400, detail="Please upload a PDF, PNG or JPG file.")
 
-    contents = file.file.read()
+    contents = read_upload(file)
     if not contents:
         raise HTTPException(status_code=400, detail="The uploaded file is empty.")
+
+    check_daily_limit()
 
     os.makedirs(UPLOAD_DIR, exist_ok=True)
     job_id = create_job(file.filename or "upload")
@@ -122,12 +132,12 @@ def create_extraction_job(background_tasks: BackgroundTasks, file: UploadFile = 
     return JobCreated(job_id=job_id, status="queued")
 
 
-@app.get("/jobs")
+@app.get("/jobs", dependencies=[Depends(require_access)])
 def recent_jobs(status: str | None = None, limit: int = Query(20, ge=1, le=100)):
     return list_jobs(status=status, limit=limit)
 
 
-@app.get("/jobs/{job_id}")
+@app.get("/jobs/{job_id}", dependencies=[Depends(require_access)])
 def read_job(job_id: str):
     job = get_job(job_id)
     if job is None:
@@ -135,7 +145,7 @@ def read_job(job_id: str):
     return job
 
 
-@app.post("/invoices", response_model=SaveResponse)
+@app.post("/invoices", response_model=SaveResponse, dependencies=[Depends(require_access)])
 def save(request: SaveRequest):
     # Re-check the human-corrected invoice with the same validators
     remaining = validate_invoice(request.corrected) + check_missing_fields(request.corrected)
@@ -148,6 +158,6 @@ def save(request: SaveRequest):
     return SaveResponse(id=invoice_id, remaining_problems=remaining)
 
 
-@app.get("/invoices")
+@app.get("/invoices", dependencies=[Depends(require_access)])
 def invoices():
     return list_invoices()
